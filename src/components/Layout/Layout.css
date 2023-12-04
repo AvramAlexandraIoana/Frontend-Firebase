@@ -1,0 +1,13 @@
+/* Layout.css */
+
+.app-container {
+    background-image: url('../../images/background-img.jpg');
+    background-size: cover;
+    background-position: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white; /* Set a white background */
+  }
+  
