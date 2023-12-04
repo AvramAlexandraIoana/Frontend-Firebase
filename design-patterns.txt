@@ -1,0 +1,23 @@
+https://itnext.io/top-5-react-typescript-design-patterns-to-boost-your-skills-to-the-next-level-5b5f54dd934f
+
+Design Patterns Description:
+
+1.Decorator (HOC - Higher Order Component):
+File: RegisterWithLayout.tsx
+Description: The withLayout HOC is used to wrap components with a common layout structure provided by the Layout component.
+
+2.Builder Pattern:
+File: FormBuilder.tsx
+Description: The FormBuilder class helps construct a complex form step by step. It abstracts the construction process of the form fields and allows easy extension.
+
+3.Factory Pattern:
+File: ComponentFactory.tsx
+Description: The ComponentFactory module provides factory functions (createMuiLink and createButton) for creating MUI Link and Button components, promoting consistent component creation.
+
+4.Adapter Pattern:
+File: Adapter.tsx
+Description: The adaptToLayout function acts as an adapter, allowing different components to conform to a common layout structure.
+
+5.Facade Pattern:
+File: RegisterFormFacade.tsx
+Description: The RegisterFormFacade component encapsulates the complex structure of the registration form. It provides a simplified interface to interact with the form while internally managing the details.

@@ -1,0 +1,30 @@
+|-- components
+|   |-- withLayout
+|   |   |-- withLayout.tsx
+|   |-- FormBuilder
+|   |   |-- FormBuilder.tsx
+|   |-- ComponentFactory
+|   |   |-- ComponentFactory.tsx
+|   |-- Adapter
+|   |   |-- Adapter.tsx
+
+
+1.Decorator (HOC - Higher Order Component):
+File: withLayout.tsx
+Description: The withLayout HOC is implemented to wrap components with a common layout structure provided by the Layout component.
+
+2.Builder Pattern:
+File: FormBuilder.tsx
+Description: The FormBuilder class facilitates the step-by-step construction of a complex form. It abstracts the form field construction process, allowing easy extension.
+
+3.Factory Pattern:
+File: ComponentFactory.tsx
+Description: The ComponentFactory module provides factory functions (createMuiLink and createButton) for creating MUI Link and Button components, ensuring consistent and centralized component creation.
+
+4.Adapter Pattern:
+File: Adapter.tsx
+Description: The adaptToLayout function serves as an adapter, transforming different components into a common layout structure.
+
+5.Facade Pattern:
+File: RegisterFormFacade.tsx
+Description: The RegisterFormFacade component encapsulates the complex structure of the registration form, providing a simplified interface for interaction while managing internal details.

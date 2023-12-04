@@ -13,7 +13,7 @@ import {
   Link as MuiLink, // Importing Link as MuiLink to avoid naming conflicts
 } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
-import Layout from "../Layout/Layout";
+import Layout from "../../components/Layout/Layout";
 import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
