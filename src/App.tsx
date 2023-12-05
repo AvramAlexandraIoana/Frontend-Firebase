@@ -2,7 +2,6 @@
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import Login from './components/Auth/Login';
-import Register from './pages/Register/Register';
 import RegisterFormFacade from './pages/Register/RegisterFormFacade';
 
 function App() {
@@ -10,8 +9,7 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/register-1" element={<RegisterFormFacade />} />
+        <Route path="/register" element={<RegisterFormFacade />} />
       </Routes>
     </>
   );
