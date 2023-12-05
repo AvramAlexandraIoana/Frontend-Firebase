@@ -1,6 +1,6 @@
 // ComponentFactory.tsx
 import React from 'react';
-import { Link as MuiLink, Button } from '@mui/material';
+import { Link as MuiLink, Button, Avatar, Typography } from '@mui/material';
 
 const createMuiLink = (props: any) => {
   return <MuiLink {...props} />;
@@ -10,4 +10,12 @@ const createButton = (props: any) => {
   return <Button {...props} />;
 };
 
-export { createMuiLink, createButton };
+const createAvatar = (props: any) => {
+  return <Avatar {...props} />;
+};
+
+const createTypography = (props: any) => {
+  return <Typography {...props} />;
+};
+
+export { createMuiLink, createButton, createAvatar, createTypography };
