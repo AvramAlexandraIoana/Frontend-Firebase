@@ -3,10 +3,10 @@ import React, { useState } from 'react';
 import { LockOutlined } from '@mui/icons-material';
 import { Box, Avatar, Typography, Grid } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import FormBuilder from '../../components/FormBuilder/FormBuilder';
-import { createAvatar, createButton, createMuiLink, createTypography } from '../../components/ComponentFactory/ComponentFactory';
-import adaptToLayout from '../../components/Adapter/Adapter';
-import withLayout from '../../components/withLayout/withLayout';
+import FormBuilder from '../FormBuilder/FormBuilder';
+import { createAvatar, createButton, createMuiLink, createTypography } from '../ComponentFactory/ComponentFactory';
+import adaptToLayout from '../Adapter/Adapter';
+import withLayout from '../withLayout/withLayout';
 
 const RegisterFormFacade = () => {
   const [email, setEmail] = useState('');

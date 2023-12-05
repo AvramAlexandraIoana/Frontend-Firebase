@@ -1,8 +1,8 @@
 
 import './App.css';
 import { Routes, Route } from 'react-router-dom';
-import Login from './components/Auth/Login';
-import RegisterFormFacade from './pages/Register/RegisterFormFacade';
+import Login from './components/Login/Login';
+import RegisterFormFacade from './components/Register/RegisterFormFacade';
 
 function App() {
   return (
