@@ -1,12 +1,16 @@
-// withLayout.tsx
 import React from 'react';
-import Layout from '../Layout/Layout';
+import Layout from '../../components/Layout/Layout';
 
-// Decorator (HOC - Higher Order Component)
-const withLayout = <P extends {}>(WrappedComponent: React.ComponentType<P>) => (props: P) => (
-  <Layout>
-    <WrappedComponent {...props} />
-  </Layout>
-);
+const withLayout = (WrappedComponent: React.ComponentType) => {
+  return class extends React.Component {
+    render() {
+      return (
+        <Layout>
+          <WrappedComponent {...this.props} />
+        </Layout>
+      );
+    }
+  };
+};
 
 export default withLayout;
