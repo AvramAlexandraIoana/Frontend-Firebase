@@ -51,6 +51,7 @@ class FormBuilder {
         type={showPassword ? 'text' : type} // Show password in plain text if showPassword is true
         validators={validators}
         errorMessages={errorMessages}
+        autoComplete="off" // Add this line to disable autocomplete
         InputProps={{
           endAdornment:
             type === 'password' ? (

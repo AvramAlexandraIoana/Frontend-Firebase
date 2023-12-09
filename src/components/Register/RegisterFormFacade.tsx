@@ -1,8 +1,7 @@
-// RegisterFormFacade.tsx
 import React, { useState } from 'react';
 import { LockOutlined } from '@mui/icons-material';
-import { Box, Avatar, Typography, Grid } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Grid } from '@mui/material';
 import FormBuilder from '../FormBuilder/FormBuilder';
 import {
   createAvatar,
@@ -24,6 +23,7 @@ const RegisterFormFacade = () => {
   const [error, setError] = useState<CustomAuthError | null>(null);
 
   const authService = new AuthService();
+  const navigate = useNavigate(); // useNavigate hook for navigation
 
   const handleRegister = async () => {
     try {
@@ -33,10 +33,13 @@ const RegisterFormFacade = () => {
         console.log('User registered:', result.user);
         setError(null);
         toast.success(`Registration successful for ${email}!`);
+
+        // Redirect to the login page after successful registration
+       // navigate('/login'); 
       } else {
         console.error('Registration error code:', result.code);
         setError(result);
-        toast.error(result.customMessage);
+        toast.error(result.customMessage || `Registration failed for ${email}. Please try again.`);
       }
     } catch (error) {
       console.error('Unexpected error:', error);
