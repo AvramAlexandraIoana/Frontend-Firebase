@@ -7,8 +7,7 @@ import { createAvatar, createTypography, createMuiLink } from '../ComponentFacto
 import adaptToLayout from '../Adapter/Adapter';
 import withLayout from '../withLayout/withLayout';
 import { AuthService } from '../../services/Auth/AuthService';
-import { useDispatch } from 'react-redux'; // Import useDispatch
-import { loginUser } from '../../redux/auth/authActions';
+import { loginUser, loginUsertest } from '../../redux/auth/authActions';
 
 
 const LoginFormFacade = () => {
@@ -16,7 +15,6 @@ const LoginFormFacade = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch(); // Get the dispatch function
 
   const handleLogin = async () => {
     try {

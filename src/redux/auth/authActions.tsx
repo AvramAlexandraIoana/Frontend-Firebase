@@ -55,21 +55,29 @@ export const registerUser = (email: string, password: string) => async (
   }
 };
 
+export const loginUsertest = async (email: string, password: string) => {
+    const user = await authService.loginUser(email, password);
+    console.log(user);
+}
 // Async action creator for login
 export const loginUser = (email: string, password: string) => async (
     dispatch: Dispatch<AuthActionTypes>
   ) => {
+    console.log('Entering loginUser action');
     try {
       // Assuming authService.loginUser returns a User object upon successful login
       const user = await authService.loginUser(email, password);
   
+      console.log('Login Success:', user);
       // Dispatch login success action
       dispatch(loginUserSuccess(user as User));
     } catch (error) {
+      console.error('Login Error:', error);
       // If login fails, dispatch login failure action
       dispatch(loginUserFailure(error as CustomAuthError));
     }
-};
+  };
+  
   
 // Sync action creators for register success and failure
 export const registerUserSuccess = (user: User): RegisterUserSuccessAction => ({
