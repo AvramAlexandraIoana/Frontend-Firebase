@@ -69,7 +69,7 @@ export const loginUser = (email: string, password: string) => async (
       // If login fails, dispatch login failure action
       dispatch(loginUserFailure(error as CustomAuthError));
     }
-  };
+};
   
 // Sync action creators for register success and failure
 export const registerUserSuccess = (user: User): RegisterUserSuccessAction => ({
