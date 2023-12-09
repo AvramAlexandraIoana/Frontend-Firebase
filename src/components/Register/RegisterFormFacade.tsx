@@ -35,7 +35,7 @@ const RegisterFormFacade = () => {
         toast.success(`Registration successful for ${email}!`);
 
         // Redirect to the login page after successful registration
-       // navigate('/login'); 
+       navigate('/login'); 
       } else {
         console.error('Registration error code:', result.code);
         setError(result);
