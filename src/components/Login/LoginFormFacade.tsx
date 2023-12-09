@@ -8,6 +8,7 @@ import adaptToLayout from '../Adapter/Adapter';
 import withLayout from '../withLayout/withLayout';
 import { AuthService } from '../../services/Auth/AuthService';
 import { loginUser, loginUsertest } from '../../redux/auth/authActions';
+import { useDispatch } from 'react-redux';
 
 
 const LoginFormFacade = () => {
@@ -15,11 +16,12 @@ const LoginFormFacade = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogin = async () => {
     try {
       // Dispatch the login action with email and password
-      await loginUser(email, password);
+      await loginUser(email, password)(dispatch);
   
       // If needed, you can still navigate after successful login
       // navigate('/dashboard');
@@ -85,3 +87,4 @@ const LoginFormFacade = () => {
 };
 
 export default withLayout(LoginFormFacade);
+
