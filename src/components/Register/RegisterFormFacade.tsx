@@ -4,21 +4,46 @@ import { LockOutlined } from '@mui/icons-material';
 import { Box, Avatar, Typography, Grid } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import FormBuilder from '../FormBuilder/FormBuilder';
-import { createAvatar, createButton, createMuiLink, createTypography } from '../ComponentFactory/ComponentFactory';
+import {
+  createAvatar,
+  createButton,
+  createMuiLink,
+  createTypography,
+} from '../ComponentFactory/ComponentFactory';
 import adaptToLayout from '../Adapter/Adapter';
 import withLayout from '../withLayout/withLayout';
+import { AuthService } from '../../services/Auth/AuthService';
+import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const RegisterFormFacade = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<CustomAuthError | null>(null);
+
+  const authService = new AuthService();
+
+  const handleRegister = async () => {
+    try {
+      const result = await authService.registerUser(email, password);
+
+      if ('user' in result) {
+        console.log('User registered:', result.user);
+        setError(null);
+        toast.success(`Registration successful for ${email}!`);
+      } else {
+        console.error('Registration error code:', result.code);
+        setError(result);
+        toast.error(result.customMessage);
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+    }
+  };
 
   const formBuilder = new FormBuilder();
-
-  const handleRegister = () => {
-    console.log('Email:', email);
-    console.log('Password:', password);
-  };
 
   const form = formBuilder
     .addTextField({
@@ -54,7 +79,11 @@ const RegisterFormFacade = () => {
 
   return adaptToLayout(
     <>
-      {createAvatar({ sx: { m: 'auto', mb: 1, bgcolor: 'primary.light' }, children: <LockOutlined /> })}
+      <ToastContainer />
+      {createAvatar({
+        sx: { m: 'auto', mb: 1, bgcolor: 'primary.light' },
+        children: <LockOutlined />,
+      })}
       {createTypography({ variant: 'h5', children: 'Register' })}
       {form}
       {createButton({
