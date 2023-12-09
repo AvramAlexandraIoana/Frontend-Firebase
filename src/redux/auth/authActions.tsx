@@ -57,20 +57,20 @@ export const registerUser = (email: string, password: string) => async (
 
 // Async action creator for login
 export const loginUser = (email: string, password: string) => async (
-  dispatch: Dispatch<AuthActionTypes>
-) => {
-  try {
-    // Assuming authService.loginUser returns a User object upon successful login
-    const user = await authService.loginUser(email, password);
-
-    // Dispatch login success action
-   // dispatch({ type: LOGIN_USER_SUCCESS, payload: user });
-  } catch (error) {
-    // If login fails, dispatch login failure action
-    //dispatch({ type: LOGIN_USER_FAILURE, payload: error });
-  }
-};
-
+    dispatch: Dispatch<AuthActionTypes>
+  ) => {
+    try {
+      // Assuming authService.loginUser returns a User object upon successful login
+      const user = await authService.loginUser(email, password);
+  
+      // Dispatch login success action
+      dispatch(loginUserSuccess(user as User));
+    } catch (error) {
+      // If login fails, dispatch login failure action
+      dispatch(loginUserFailure(error as CustomAuthError));
+    }
+  };
+  
 // Sync action creators for register success and failure
 export const registerUserSuccess = (user: User): RegisterUserSuccessAction => ({
   type: REGISTER_USER_SUCCESS,
@@ -84,11 +84,11 @@ export const registerUserFailure = (error: CustomAuthError): RegisterUserFailure
 
 // Sync action creators for login success and failure
 export const loginUserSuccess = (user: User): LoginUserSuccessAction => ({
-  type: LOGIN_USER_SUCCESS,
-  payload: user,
+    type: LOGIN_USER_SUCCESS,
+    payload: user,
 });
-
+  
 export const loginUserFailure = (error: CustomAuthError): LoginUserFailureAction => ({
-  type: LOGIN_USER_FAILURE,
-  payload: error,
+    type: LOGIN_USER_FAILURE,
+    payload: error,
 });
