@@ -1,24 +1,36 @@
-// LoginFormFacade.tsx
 import React, { useState } from 'react';
 import { LockOutlined } from '@mui/icons-material';
 import { Box, Avatar, Typography, Grid } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import FormBuilder from '../FormBuilder/FormBuilder';
-import { createAvatar, createButton, createMuiLink, createTypography } from '../ComponentFactory/ComponentFactory';
+import { createAvatar, createTypography, createMuiLink } from '../ComponentFactory/ComponentFactory';
 import adaptToLayout from '../Adapter/Adapter';
 import withLayout from '../withLayout/withLayout';
+import { login, loginTest } from '../../actions/authActions'; // Import your login action
+import { AuthService } from '../../services/Auth/AuthService';
+import { useDispatch } from 'react-redux'; // Import useDispatch
+
 
 const LoginFormFacade = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch(); // Get the dispatch function
+
+  // LoginFormFacade.tsx
+  const handleLogin = async () => {
+    try {
+      await loginTest(email, password);      // If the login is successful, redirect to the dashboard
+      // navigate('/dashboard');
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      // Handle other login errors or display a message to the user
+    }
+  };
+
 
   const formBuilder = new FormBuilder({ buttonLabel: 'Login' });
-
-  const handleLogin = () => {
-    console.log('Email:', email);
-    console.log('Password:', password);
-  };
 
   const form = formBuilder
     .addTextField({
@@ -61,7 +73,7 @@ const LoginFormFacade = () => {
         <Grid item>
           {createMuiLink({
             component: RouterLink,
-            to: '/login',
+            to: '/register',
             variant: 'body2',
             color: 'primary',
             underline: 'hover',
