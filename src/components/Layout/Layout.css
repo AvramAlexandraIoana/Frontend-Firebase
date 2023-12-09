@@ -1,7 +1,7 @@
 /* Layout.css */
 
 .app-container {
-    background-image: url('../../images/background-img.jpg');
+    background-image: url('../../assets/images/background-img.jpg');
     background-size: cover;
     background-position: center;
     min-height: 100vh;

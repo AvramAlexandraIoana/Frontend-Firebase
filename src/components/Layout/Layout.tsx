@@ -3,7 +3,6 @@
 // It serves as a higher-order component (HOC) that can be applied to different parts of the application.
 
 import React, { ReactNode } from 'react';
-import backgroundImage from '../images/background-img.jpg';
 import './Layout.css'; // Import the global styles
 
 interface LayoutProps {
