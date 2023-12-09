@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { LockOutlined } from '@mui/icons-material';
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import FormBuilder from '../FormBuilder/FormBuilder';
 import {
@@ -23,7 +23,7 @@ const RegisterFormFacade = () => {
   const [error, setError] = useState<CustomAuthError | null>(null);
 
   const authService = new AuthService();
-  const navigate = useNavigate(); // useNavigate hook for navigation
+  const navigate = useNavigate();
 
   const handleRegister = async () => {
     try {
@@ -35,7 +35,7 @@ const RegisterFormFacade = () => {
         toast.success(`Registration successful for ${email}!`);
 
         // Redirect to the login page after successful registration
-       navigate('/login'); 
+        navigate('/login');
       } else {
         console.error('Registration error code:', result.code);
         setError(result);
@@ -46,7 +46,7 @@ const RegisterFormFacade = () => {
     }
   };
 
-  const formBuilder = new FormBuilder();
+  const formBuilder = new FormBuilder({ buttonLabel: 'Register' });
 
   const form = formBuilder
     .addTextField({
@@ -78,7 +78,7 @@ const RegisterFormFacade = () => {
         'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
       ],
     })
-    .buildForm(handleRegister);
+    .buildForm(handleRegister); // Pass an empty function, as handleSubmit logic is already handled in handleRegister
 
   return adaptToLayout(
     <>
@@ -89,14 +89,6 @@ const RegisterFormFacade = () => {
       })}
       {createTypography({ variant: 'h5', children: 'Register' })}
       {form}
-      {createButton({
-        type: 'submit',
-        fullWidth: true,
-        variant: 'contained',
-        sx: { mt: 3, mb: 2, borderRadius: 20 },
-        children: 'Register',
-        onClick: handleRegister,
-      })}
       <Grid container justifyContent="flex-end">
         <Grid item>
           {createMuiLink({

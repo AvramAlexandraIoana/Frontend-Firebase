@@ -5,6 +5,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import { createButton } from '../ComponentFactory/ComponentFactory';
 
 interface FieldConfig {
   label: string;
@@ -14,15 +15,21 @@ interface FieldConfig {
   type?: 'text' | 'number' | 'email' | 'password';
   validators?: string[];
   errorMessages?: string[];
-  showPassword?: boolean; // New prop for displaying password
-  onChangeToggle?: () => void; // New prop for handling password toggle
+  showPassword?: boolean;
+  onChangeToggle?: () => void;
+}
+
+interface FormBuilderConfig {
+  buttonLabel: string;
 }
 
 class FormBuilder {
   private fields: React.ReactNode[];
+  private buttonLabel: string;
 
-  constructor() {
+  constructor(config: FormBuilderConfig) {
     this.fields = [];
+    this.buttonLabel = config.buttonLabel;
   }
 
   addTextField(config: FieldConfig): FormBuilder {
@@ -48,10 +55,10 @@ class FormBuilder {
         onChange={onChange}
         name={name}
         value={value}
-        type={showPassword ? 'text' : type} // Show password in plain text if showPassword is true
+        type={showPassword ? 'text' : type}
         validators={validators}
         errorMessages={errorMessages}
-        autoComplete="off" // Add this line to disable autocomplete
+        autoComplete="off"
         InputProps={{
           endAdornment:
             type === 'password' ? (
@@ -73,9 +80,17 @@ class FormBuilder {
     return (
       <ValidatorForm onSubmit={handleSubmit} instantValidate={true}>
         {this.fields}
+        {createButton({
+          type: 'submit',
+          fullWidth: true,
+          variant: 'contained',
+          sx: { mt: 3, mb: 2, borderRadius: 20 },
+          children: this.buttonLabel
+        })}
       </ValidatorForm>
     );
   }
+
 }
 
 export default FormBuilder;

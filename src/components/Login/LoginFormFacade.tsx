@@ -13,7 +13,7 @@ const LoginFormFacade = () => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const formBuilder = new FormBuilder();
+  const formBuilder = new FormBuilder({ buttonLabel: 'Login' });
 
   const handleLogin = () => {
     console.log('Email:', email);
@@ -57,14 +57,6 @@ const LoginFormFacade = () => {
       {createAvatar({ sx: { m: 'auto', mb: 1, bgcolor: 'primary.light' }, children: <LockOutlined /> })}
       {createTypography({ variant: 'h5', children: 'Login' })}
       {form}
-      {createButton({
-        type: 'submit',
-        fullWidth: true,
-        variant: 'contained',
-        sx: { mt: 3, mb: 2, borderRadius: 20 },
-        children: 'Login',
-        onClick: handleLogin,
-      })}
       <Grid container justifyContent="flex-end">
         <Grid item>
           {createMuiLink({
