@@ -6,9 +6,9 @@ import FormBuilder from '../FormBuilder/FormBuilder';
 import { createAvatar, createTypography, createMuiLink } from '../ComponentFactory/ComponentFactory';
 import adaptToLayout from '../Adapter/Adapter';
 import withLayout from '../withLayout/withLayout';
-import { login, loginTest } from '../../actions/authActions'; // Import your login action
 import { AuthService } from '../../services/Auth/AuthService';
 import { useDispatch } from 'react-redux'; // Import useDispatch
+import { loginUser } from '../../redux/auth/authActions';
 
 
 const LoginFormFacade = () => {
@@ -18,18 +18,19 @@ const LoginFormFacade = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch(); // Get the dispatch function
 
-  // LoginFormFacade.tsx
   const handleLogin = async () => {
     try {
-      await loginTest(email, password);      // If the login is successful, redirect to the dashboard
+      // Dispatch the login action with email and password
+      await loginUser(email, password);
+  
+      // If needed, you can still navigate after successful login
       // navigate('/dashboard');
     } catch (error) {
       console.error('Unexpected error:', error);
       // Handle other login errors or display a message to the user
     }
   };
-
-
+  
   const formBuilder = new FormBuilder({ buttonLabel: 'Login' });
 
   const form = formBuilder

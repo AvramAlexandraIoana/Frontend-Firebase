@@ -1,15 +1,11 @@
 // AuthService.ts
-import {
-    AuthError,
-    UserCredential,
-    createUserWithEmailAndPassword,
-    signInWithEmailAndPassword,
-  } from 'firebase/auth';
+import { UserCredential, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { AuthError } from 'firebase/auth';
 import { AuthServiceInterface } from '../../interfaces/Auth/AuthServiceInterface';
 import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
 import { auth } from '../../configuration/firebase';
 import { User } from '../../interfaces/Auth/User';
-  
+
 export class AuthService implements AuthServiceInterface {
   private static mapAuthErrorToCustomError(error: AuthError, email: string): CustomAuthError {
     let customMessage = '';
@@ -47,13 +43,13 @@ export class AuthService implements AuthServiceInterface {
       return AuthService.mapAuthErrorToCustomError(error as AuthError, email);
     }
   }
-  
+
   async loginUser(email: string, password: string): Promise<User | CustomAuthError> {
     try {
       const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
       const user: User = {
         kind: 'identitytoolkit#SignupNewUserResponse', // Replace with your actual kind value
-        idToken: await userCredential.user.getIdToken() ,
+        idToken: await userCredential.user.getIdToken(),
         email: userCredential.user.email || '',
         refreshToken: userCredential.user.refreshToken || '',
         expiresIn: 3600, // Adjust based on your actual data structure
@@ -65,4 +61,3 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 }
-  
