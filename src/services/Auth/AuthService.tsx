@@ -1,4 +1,3 @@
-// AuthService.ts
 import { UserCredential, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthError } from 'firebase/auth';
 import { AuthServiceInterface } from '../../interfaces/Auth/AuthServiceInterface';
@@ -7,9 +6,27 @@ import { auth } from '../../configuration/firebase';
 import { User } from '../../interfaces/Auth/User';
 
 export class AuthService implements AuthServiceInterface {
-  private static mapAuthErrorToCustomError(error: AuthError, email: string): CustomAuthError {
-    let customMessage = '';
+  async registerUser(email: string, password: string): Promise<User | CustomAuthError> {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      return await this.createUserFromUserCredential(userCredential);
+    } catch (error) {
+      return this.mapAuthErrorToCustomError(error as AuthError, email);
+    }
+  }
 
+  async loginUser(email: string, password: string): Promise<User | CustomAuthError> {
+    try {
+      const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
+      return await this.createUserFromUserCredential(userCredential);
+    } catch (error) {
+      return this.mapAuthErrorToCustomError(error as AuthError, email);
+    }
+  }
+
+  mapAuthErrorToCustomError(error: AuthError, email: string): CustomAuthError {
+    let customMessage = '';
+    console.log(error.code);
     switch (error.code) {
       case 'auth/email-already-in-use':
         customMessage = `Email ${email} is already in use. Please use a different email.`;
@@ -26,8 +43,11 @@ export class AuthService implements AuthServiceInterface {
       case 'auth/wrong-password':
         customMessage = 'Wrong password.';
         break;
-      // Add more cases as needed
+      case 'auth/invalid-credential':
+        customMessage = 'Invalid credential.';
+        break
       default:
+        console.error('Unexpected authentication error:', error);
         customMessage = 'An unexpected authentication error occurred.';
         break;
     }
@@ -35,29 +55,17 @@ export class AuthService implements AuthServiceInterface {
     return { ...error, customMessage };
   }
 
-  async registerUser(email: string, password: string): Promise<UserCredential | CustomAuthError> {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      return userCredential;
-    } catch (error) {
-      return AuthService.mapAuthErrorToCustomError(error as AuthError, email);
-    }
+  async createUserFromUserCredential(userCredential: UserCredential): Promise<User> {
+    // Replace 'identitytoolkit#SignupNewUserResponse' with your actual kind value
+    const user: User = {
+      kind: 'identitytoolkit#SignupNewUserResponse',
+      idToken:  await userCredential.user.getIdToken(),
+      email: userCredential.user?.email || '',
+      refreshToken: userCredential.user?.refreshToken || '',
+      expiresIn: 3600, // Adjust based on your actual data structure
+      localId: userCredential.user?.uid || '',
+    };
+    return user;
   }
-
-  async loginUser(email: string, password: string): Promise<User | CustomAuthError> {
-    try {
-      const userCredential: UserCredential = await signInWithEmailAndPassword(auth, email, password);
-      const user: User = {
-        kind: 'identitytoolkit#SignupNewUserResponse', // Replace with your actual kind value
-        idToken: await userCredential.user.getIdToken(),
-        email: userCredential.user.email || '',
-        refreshToken: userCredential.user.refreshToken || '',
-        expiresIn: 3600, // Adjust based on your actual data structure
-        localId: userCredential.user.uid || '',
-      };
-      return user;
-    } catch (error) {
-      return AuthService.mapAuthErrorToCustomError(error as AuthError, email);
-    }
-  }
+  
 }

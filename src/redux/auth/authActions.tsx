@@ -8,7 +8,7 @@ import {
   LOGIN_USER_SUCCESS,
   LOGIN_USER_FAILURE,
 } from './authActionTypes';
-import { AuthService } from '../../services/Auth/AuthService'; // Import your authentication service
+import { AuthService } from '../../services/Auth/AuthService';
 
 const authService = new AuthService();
 
@@ -41,34 +41,41 @@ export type AuthActionTypes =
 
 // Async action creator for register
 export const registerUser = (email: string, password: string) => async (
+    dispatch: Dispatch<AuthActionTypes>
+  ) => {
+    try {
+        const result = await authService.registerUser(email, password);
+        console.log(typeof(result));
+        if ('kind' in result) {
+            // This means result is a User
+            dispatch(registerUserSuccess(result));
+        } else {
+            // This means result is a CustomAuthError
+            dispatch(registerUserFailure(result));
+        }
+    } catch (error) {
+        // Handle other errors, e.g., network errors
+        console.error('Unexpected error:', error);
+    }
+};
+  
+
+// Async action creator for login
+export const loginUser = (email: string, password: string) => async (
   dispatch: Dispatch<AuthActionTypes>
 ) => {
-  try {
-    // Assuming authService.registerUser returns a User object upon successful registration
-    const user = await authService.registerUser(email, password);
-
-    // Dispatch register success action
-   // dispatch({ type: REGISTER_USER_SUCCESS, payload: user });
-  } catch (error) {
-    // If registration fails, dispatch register failure action
-    //dispatch({ type: REGISTER_USER_FAILURE, payload: error });
-  }
-};
-
-export const loginUsertest = async (email: string, password: string) => {
-    const user = await authService.loginUser(email, password);
-    console.log(user);
-}
-// Async action creator for login
-export const loginUser = (email: string, password: string) => async (dispatch: Dispatch<AuthActionTypes>) => {
-    console.log('Entering userLogin action');
     try {
-      const user = await authService.loginUser(email, password);
-      console.log('Login Success:', user);
-      dispatch(loginUserSuccess(user as User));
+    const result = await authService.loginUser(email, password);
+    if ('kind' in result) {
+        // This means result is a User
+        dispatch(loginUserSuccess(result));
+    } else {
+        // This means result is a CustomAuthError
+        dispatch(loginUserFailure(result));
+    }
     } catch (error) {
-      console.error('Login Error:', error);
-      dispatch(loginUserFailure(error as CustomAuthError));
+        // Handle other errors, e.g., network errors
+        console.error('Unexpected error:', error);
     }
 };
 
@@ -85,11 +92,11 @@ export const registerUserFailure = (error: CustomAuthError): RegisterUserFailure
 
 // Sync action creators for login success and failure
 export const loginUserSuccess = (user: User): LoginUserSuccessAction => ({
-    type: LOGIN_USER_SUCCESS,
-    payload: user,
+  type: LOGIN_USER_SUCCESS,
+  payload: user,
 });
-  
+
 export const loginUserFailure = (error: CustomAuthError): LoginUserFailureAction => ({
-    type: LOGIN_USER_FAILURE,
-    payload: error,
+  type: LOGIN_USER_FAILURE,
+  payload: error,
 });

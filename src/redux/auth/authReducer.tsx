@@ -5,23 +5,29 @@ import { AuthActionTypes } from './authActions';
 
 interface AuthState {
   user: User | null;
-  error: CustomAuthError | null;
+  registrationError: CustomAuthError | null;
+  loginError: CustomAuthError | null;
 }
 
 const initialState: AuthState = {
   user: null,
-  error: null,
+  registrationError: null,
+  loginError: null,
 };
 
 const authReducer = (state: AuthState = initialState, action: AuthActionTypes): AuthState => {
   switch (action.type) {
     case 'REGISTER_USER_SUCCESS':
-    case 'LOGIN_USER_SUCCESS':
-      return { ...state, user: action.payload, error: null };
+      return { ...state, user: action.payload, registrationError: null };
 
     case 'REGISTER_USER_FAILURE':
+      return { ...state, user: null, registrationError: action.payload, loginError: null };
+
+    case 'LOGIN_USER_SUCCESS':
+      return { ...state, user: action.payload, loginError: null };
+
     case 'LOGIN_USER_FAILURE':
-      return { ...state, user: null, error: action.payload };
+      return { ...state, user: null, loginError: action.payload, registrationError: null };
 
     default:
       return state;

@@ -1,35 +1,52 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LockOutlined } from '@mui/icons-material';
-import { Box, Avatar, Typography, Grid } from '@mui/material';
+import {  Grid, CircularProgress } from '@mui/material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import FormBuilder from '../FormBuilder/FormBuilder';
 import { createAvatar, createTypography, createMuiLink } from '../ComponentFactory/ComponentFactory';
 import adaptToLayout from '../Adapter/Adapter';
 import withLayout from '../withLayout/withLayout';
-import { AuthService } from '../../services/Auth/AuthService';
-import { loginUser, loginUsertest } from '../../redux/auth/authActions';
-import { useDispatch } from 'react-redux';
+import { loginUser } from '../../redux/auth/authActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { toast, ToastContainer } from 'react-toastify';
 
 
 const LoginFormFacade = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false); // New loading state
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const authState = useSelector((state: RootState) => state.auth); // Get the entire auth state
+
+  console.log('real time auth state', authState);
 
   const handleLogin = async () => {
-    try {
-      // Dispatch the login action with email and password
-      await loginUser(email, password)(dispatch);
-  
-      // If needed, you can still navigate after successful login
-      // navigate('/dashboard');
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      // Handle other login errors or display a message to the user
-    }
+    setLoading(true); // Set loading to true before making the async call
+    await loginUser(email, password)(dispatch);
+    setLoading(false); // Set loading to false after the async call completes
   };
+
+  // useEffect to monitor changes in authState.loginError
+  useEffect(() => {
+    if (authState.loginError) {
+      // Display a pop-up message for the login error
+      toast.error(authState.loginError.customMessage || 'Registration failed. Please try again.');
+
+      // Optional: Clear the login error in the state after displaying the message
+      dispatch({ type: 'LOGIN_USER_FAILURE', payload: null });
+    }
+  }, [authState.loginError, dispatch]);
+
+  // useEffect to redirect to login after successful registration
+  useEffect(() => {
+    if (authState.user) {
+      navigate('/profile');
+    }
+  }, [authState.user, navigate]);
   
   const formBuilder = new FormBuilder({ buttonLabel: 'Login' });
 
@@ -65,11 +82,15 @@ const LoginFormFacade = () => {
     })
     .buildForm(handleLogin);
 
-  return adaptToLayout(
+return adaptToLayout(
     <>
+      <ToastContainer />
       {createAvatar({ sx: { m: 'auto', mb: 1, bgcolor: 'primary.light' }, children: <LockOutlined /> })}
       {createTypography({ variant: 'h5', children: 'Login' })}
       {form}
+      {loading ? (
+        <CircularProgress size={25} /> // Centered loading indicator
+      ) : null}
       <Grid container justifyContent="flex-end">
         <Grid item>
           {createMuiLink({

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LockOutlined } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { Grid } from '@mui/material';
+import { CircularProgress, Grid } from '@mui/material';
 import FormBuilder from '../FormBuilder/FormBuilder';
 import {
   createAvatar,
@@ -15,37 +15,47 @@ import { AuthService } from '../../services/Auth/AuthService';
 import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { registerUser } from '../../redux/auth/authActions';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 const RegisterFormFacade = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<CustomAuthError | null>(null);
+  const [loading, setLoading] = useState(false); // New loading state
 
-  const authService = new AuthService();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const authState = useSelector((state: RootState) => state.auth); // Get the entire auth state
+
+  console.log('Real-time Auth State:', authState); // Log the real-time state
 
   const handleRegister = async () => {
-    try {
-      const result = await authService.registerUser(email, password);
-
-      if ('user' in result) {
-        console.log('User registered:', result.user);
-        setError(null);
-        toast.success(`Registration successful for ${email}!`);
-
-        // Redirect to the login page after successful registration
-        navigate('/login');
-      } else {
-        console.error('Registration error code:', result.code);
-        setError(result);
-        toast.error(result.customMessage || `Registration failed for ${email}. Please try again.`);
-      }
-    } catch (error) {
-      console.error('Unexpected error:', error);
-    }
+    setLoading(true); // Set loading to true before making the async call
+    await registerUser(email, password)(dispatch);
+    setLoading(false); // Set loading to false after the async call completes
   };
 
+  // useEffect to monitor changes in authState.registrationError
+  useEffect(() => {
+    if (authState.registrationError) {
+      // Display a pop-up message for the registration error
+      toast.error(authState.registrationError.customMessage || 'Registration failed. Please try again.');
+
+      // Optional: Clear the registration error in the state after displaying the message
+      dispatch({ type: 'REGISTER_USER_FAILURE', payload: null });
+    }
+  }, [authState.registrationError, dispatch]);
+
+    // useEffect to redirect to login after successful registration
+    useEffect(() => {
+      if (authState.user) {
+        dispatch({ type: 'REGISTER_USER_FAILURE', payload: null });
+        navigate('/login');
+      }
+    }, [authState.user, navigate]);
+  
   const formBuilder = new FormBuilder({ buttonLabel: 'Register' });
 
   const form = formBuilder
@@ -89,6 +99,9 @@ const RegisterFormFacade = () => {
       })}
       {createTypography({ variant: 'h5', children: 'Register' })}
       {form}
+      {loading ? (
+        <CircularProgress size={25} /> // Centered loading indicator
+      ) : null}
       <Grid container justifyContent="flex-end">
         <Grid item>
           {createMuiLink({
