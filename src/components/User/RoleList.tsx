@@ -72,7 +72,7 @@ const RoleList: React.FC = () => {
       <CustomAppBar />
         <div style={{ margin: '20px' }}>
           <MaterialTable
-            title="Role List"
+            title="Role list"
             columns={columns}
             data={roleList}
             icons={tableIcons as any}
@@ -82,6 +82,22 @@ const RoleList: React.FC = () => {
               pageSizeOptions: [10],
               search: true,
               sorting: false,
+              rowStyle: {
+                margin: '0',
+                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                fontWeight: 500,
+                fontSize: '1.25rem',
+                lineHeight: 1.6,
+                letterSpacing: '0.0075em',
+              },
+              headerStyle: {
+                margin: '0',
+                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                fontWeight: 'bold', // Make the text bold
+                fontSize: '1.25rem',
+                lineHeight: 1.6,
+                letterSpacing: '0.0075em',
+              },
             }}
           />
         </div>
