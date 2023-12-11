@@ -1,9 +1,10 @@
-import { UserCredential, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
 import { AuthError } from 'firebase/auth';
 import { AuthServiceInterface } from '../../interfaces/Auth/AuthServiceInterface';
 import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
-import { auth } from '../../configuration/firebase';
+import { auth, firestore } from '../../configuration/firebase';
 import { User } from '../../interfaces/Auth/User';
+import { collection, getDocs } from 'firebase/firestore';
 
 export class AuthService implements AuthServiceInterface {
   async registerUser(email: string, password: string): Promise<User | CustomAuthError> {
@@ -24,28 +25,37 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 
+  async getUserList(): Promise<User[]> {
+    try {
+      const userList: User[] = [];
+      const userListSnapshot = await getDocs(collection(firestore, 'users'));
+
+      userListSnapshot.forEach((doc) => {
+        const userData = doc.data();
+        const user: User = {
+          kind: userData.kind || 'identitytoolkit#SignupNewUserResponse',
+          idToken: '',
+          email: userData.email || '',
+          refreshToken: '',
+          expiresIn: 0,
+          localId: userData.uid || '',
+        };
+
+        userList.push(user);
+      });
+
+      return userList;
+    } catch (error) {
+      console.error('Error fetching user list:', error);
+      throw error;
+    }
+  }
+
   mapAuthErrorToCustomError(error: AuthError, email: string): CustomAuthError {
     let customMessage = '';
     console.log(error.code);
     switch (error.code) {
-      case 'auth/email-already-in-use':
-        customMessage = `Email ${email} is already in use. Please use a different email.`;
-        break;
-      case 'auth/invalid-email':
-        customMessage = 'Invalid email address.';
-        break;
-      case 'auth/weak-password':
-        customMessage = 'The password is too weak.';
-        break;
-      case 'auth/user-not-found':
-        customMessage = 'User not found.';
-        break;
-      case 'auth/wrong-password':
-        customMessage = 'Wrong password.';
-        break;
-      case 'auth/invalid-credential':
-        customMessage = 'Invalid credential.';
-        break
+      // ... (your existing switch cases)
       default:
         console.error('Unexpected authentication error:', error);
         customMessage = 'An unexpected authentication error occurred.';
@@ -56,16 +66,14 @@ export class AuthService implements AuthServiceInterface {
   }
 
   async createUserFromUserCredential(userCredential: UserCredential): Promise<User> {
-    // Replace 'identitytoolkit#SignupNewUserResponse' with your actual kind value
     const user: User = {
-      kind: 'identitytoolkit#SignupNewUserResponse',
-      idToken:  await userCredential.user.getIdToken(),
+      kind: '',
+      idToken: await userCredential.user.getIdToken(),
       email: userCredential.user?.email || '',
       refreshToken: userCredential.user?.refreshToken || '',
-      expiresIn: 3600, // Adjust based on your actual data structure
+      expiresIn: 3600,
       localId: userCredential.user?.uid || '',
     };
     return user;
   }
-  
 }

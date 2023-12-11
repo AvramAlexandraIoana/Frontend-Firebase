@@ -6,6 +6,7 @@ import RegisterFormFacade from './components/Auth/RegisterFormFacade';
 import LoginFormFacade from './components/Auth/LoginFormFacade';
 import Profile from './components/Auth/Profile';
 import './assets/css/global.css'; // Import the global CSS file
+import UserList from './components/User/UserList';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/register" element={<RegisterFormFacade />} />
           <Route path="/login" element={<LoginFormFacade />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/user-list" element={<UserList />} />
         </Routes>
       </>
     </Provider>

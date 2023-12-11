@@ -1,6 +1,6 @@
-// firebase.ts
 import { initializeApp } from 'firebase/app';
-import { getAuth, Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDEIrLSFC3NmuNWXrvyrF1Hs7ekgHZkRp8",
@@ -17,8 +17,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Get the authentication instance
-export const auth: Auth = getAuth(app);
+const authInstance: Auth = getAuth(app);
 
-export { createUserWithEmailAndPassword, signInWithEmailAndPassword }; // Export the methods explicitly
+// Get the Firestore instance
+const firestoreInstance = getFirestore(app);
 
-export default app;
+export { authInstance as auth, firestoreInstance as firestore, app as firebase };
