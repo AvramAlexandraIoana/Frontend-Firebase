@@ -5,6 +5,7 @@ import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
 import { auth, firestore } from '../../configuration/firebase';
 import { User } from '../../interfaces/Auth/User';
 import { collection, getDocs } from 'firebase/firestore';
+import { Role } from '../../interfaces/Auth/Role';
 
 export class AuthService implements AuthServiceInterface {
   async registerUser(email: string, password: string): Promise<User | CustomAuthError> {
@@ -28,7 +29,7 @@ export class AuthService implements AuthServiceInterface {
   async getUserList(): Promise<User[]> {
     try {
       const userList: User[] = [];
-      const userListSnapshot = await getDocs(collection(firestore, 'users'));
+      const userListSnapshot = await getDocs(collection(firestore, 'roles'));
       console.log('User List Snapshot:', userListSnapshot.docs.length);
   
       userListSnapshot.forEach((doc) => {
@@ -56,6 +57,25 @@ export class AuthService implements AuthServiceInterface {
       throw error;
     }
   }  
+
+  
+  async getRoleList(): Promise<Role[]> {
+    try {
+      const roleList: Role[] = [];
+      const roleListSnapshot = await getDocs(collection(firestore, 'roles'));
+
+      roleListSnapshot.forEach((doc) => {
+        const roleData = doc.data() as Role;
+        roleList.push(roleData);
+      });
+
+      return roleList;
+    } catch (error) {
+      console.error('Error fetching role list:', error);
+      throw error;
+    }
+  }
+
   
   mapAuthErrorToCustomError(error: AuthError, email: string): CustomAuthError {
     let customMessage = '';

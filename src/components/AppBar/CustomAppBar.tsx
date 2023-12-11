@@ -10,9 +10,11 @@ const CustomAppBar: React.FC = () => {
           Travel App
         </Typography>
 
-        <Button component={Link} to="/user-list" color="inherit">
-          User List
-        </Button>
+        <div style={{ marginLeft: 'auto' }}>
+          <Button component={Link} to="/role-list" color="inherit">
+            Role List
+          </Button>
+        </div>
 
         {/* Add more Navbar elements as needed */}
       </Toolbar>
