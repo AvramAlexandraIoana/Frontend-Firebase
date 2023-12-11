@@ -30,6 +30,16 @@ const LoginFormFacade = () => {
     setLoading(false); // Set loading to false after the async call completes
   };
 
+  useEffect(() => {
+    // Check for the token in localStorage
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      // If token exists, redirect to the profile page
+      navigate('/profile');
+    }
+  }, [navigate]);
+
   // useEffect to monitor changes in authState.loginError
   useEffect(() => {
     if (authState.loginError) {

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { AppBar, Toolbar, Typography, CircularProgress, Grid, Link } from '@mui/material';
+import { Avatar, CircularProgress, Grid, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import {jwtDecode} from 'jwt-decode'; // Import jwt-decode
-import { DecodedToken } from '../../interfaces/Auth/DecodedToken';
+import { jwtDecode } from 'jwt-decode'; // Import jwt-decode
 import CustomAppBar from '../AppBar/CustomAppBar';
+import { createButton } from '../ComponentFactory/ComponentFactory';
+import { DecodedToken } from '../../interfaces/Auth/DecodedToken';
 
 const Profile = () => {
   const [user, setUser] = useState<DecodedToken | null>(null);
@@ -28,9 +29,15 @@ const Profile = () => {
     }
   }, [navigate]);
 
+  const handleLogout = () => {
+    // Clear the token from localStorage on logout
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
+
   return (
     <>
-      <CustomAppBar/>
+      <CustomAppBar />
       <Grid
         container
         direction="column"
@@ -42,6 +49,7 @@ const Profile = () => {
           <CircularProgress size={50} />
         ) : user ? (
           <>
+            <Avatar alt={user.email}  sx={{ width: 100, height: 100, mb: 2 }} />
             <Typography variant="h4" gutterBottom>
               Welcome, {user.email}!
             </Typography>
@@ -49,9 +57,14 @@ const Profile = () => {
               Your User ID: {user.sub}
             </Typography>
             {/* Add more user information here as needed */}
-            <Link component="button" variant="body2" onClick={() => navigate('/logout')}>
-              Logout
-            </Link>
+            {createButton({
+              type: 'submit',
+              fullWidth: false,
+              variant: 'contained',
+              sx: { borderRadius: 20, mt: 3 },
+              children: 'Logout',
+              onClick: handleLogout
+            })}
           </>
         ) : (
           <Typography variant="body1">No user is signed in.</Typography>
