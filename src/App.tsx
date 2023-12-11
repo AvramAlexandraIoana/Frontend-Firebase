@@ -1,19 +1,21 @@
 import React from 'react';
-import './App.css';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Provider } from 'react-redux'; // Import Provider
-import store from './redux/store'; // Import your Redux store
-import RegisterFormFacade from './components/Register/RegisterFormFacade';
-import LoginFormFacade from './components/Login/LoginFormFacade';
+import { Provider } from 'react-redux';
+import store from './redux/store';
+import RegisterFormFacade from './components/Auth/RegisterFormFacade';
+import LoginFormFacade from './components/Auth/LoginFormFacade';
+import Profile from './components/Auth/Profile';
+import './assets/css/global.css'; // Import the global CSS file
 
 function App() {
   return (
-    <Provider store={store}> {/* Wrap the entire component tree with Provider */}
+    <Provider store={store}>
       <>
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/register" element={<RegisterFormFacade />} />
           <Route path="/login" element={<LoginFormFacade />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </>
     </Provider>

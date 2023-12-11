@@ -44,6 +44,10 @@ const LoginFormFacade = () => {
   // useEffect to redirect to login after successful registration
   useEffect(() => {
     if (authState.user) {
+      // Set the authentication token in local storage
+      localStorage.setItem('token', authState.user.idToken);
+
+      // Redirect to the profile page after successful login
       navigate('/profile');
     }
   }, [authState.user, navigate]);
