@@ -6,7 +6,7 @@ const CustomAppBar: React.FC = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component={Link} to="/">
+        <Typography variant="h6">
           Travel App
         </Typography>
 

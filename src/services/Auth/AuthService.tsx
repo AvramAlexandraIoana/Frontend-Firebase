@@ -29,28 +29,34 @@ export class AuthService implements AuthServiceInterface {
     try {
       const userList: User[] = [];
       const userListSnapshot = await getDocs(collection(firestore, 'users'));
-
+      console.log('User List Snapshot:', userListSnapshot.docs.length);
+  
       userListSnapshot.forEach((doc) => {
         const userData = doc.data();
-        const user: User = {
-          kind: userData.kind || 'identitytoolkit#SignupNewUserResponse',
-          idToken: '',
-          email: userData.email || '',
-          refreshToken: '',
-          expiresIn: 0,
-          localId: userData.uid || '',
-        };
-
-        userList.push(user);
+        console.log('User Data:', userData);
+  
+        if (userData && userData.uid && userData.email) {
+          const user: User = {
+            kind: 'identitytoolkit#SignupNewUserResponse', // Adjust as needed
+            idToken: '',
+            email: userData.email || '',
+            refreshToken: '',
+            expiresIn: 0,
+            localId: userData.uid || '',
+          };
+  
+          userList.push(user);
+        }
       });
-
+  
+      console.log('Final User List:', userList);
       return userList;
     } catch (error) {
       console.error('Error fetching user list:', error);
       throw error;
     }
-  }
-
+  }  
+  
   mapAuthErrorToCustomError(error: AuthError, email: string): CustomAuthError {
     let customMessage = '';
     console.log(error.code);

@@ -14,6 +14,7 @@ const UserList = () => {
   const fetchUserList = async () => {
     try {
       const users = await authService.getUserList();
+      console.log(users);
       setUserList(users);
     } catch (error) {
       console.error('Error fetching user list:', error);
