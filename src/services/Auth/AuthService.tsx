@@ -4,7 +4,7 @@ import { AuthServiceInterface } from '../../interfaces/Auth/AuthServiceInterface
 import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
 import { auth, firestore } from '../../configuration/firebase';
 import { User } from '../../interfaces/Auth/User';
-import { collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import { Role } from '../../interfaces/Auth/Role';
 
 export class AuthService implements AuthServiceInterface {
@@ -85,6 +85,24 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 
+  async addRole(role: Role): Promise<void> {
+    try {
+      await addDoc(collection(firestore, 'roles'), role);
+    } catch (error) {
+      console.error('Error adding new role:', error);
+      throw error;
+    }
+  }
+
+  async deleteRole(roleId: string): Promise<void> {
+    try {
+      const roleRef = doc(firestore, 'roles', roleId);
+      await deleteDoc(roleRef);
+    } catch (error) {
+      console.error('Error deleting role:', error);
+      throw error;
+    }
+  }
   
   mapAuthErrorToCustomError(error: AuthError, email: string): CustomAuthError {
     let customMessage = '';
