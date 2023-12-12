@@ -1,4 +1,3 @@
-// RoleList.tsx
 import React, { useEffect, useState } from 'react';
 import { AuthService } from '../../services/Auth/AuthService';
 import { Role } from '../../interfaces/Auth/Role';
@@ -19,6 +18,7 @@ import {
   Paper,
   CircularProgress,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const authService = new AuthService();
 
@@ -29,6 +29,7 @@ const RoleList: React.FC = () => {
   const [newRoleName, setNewRoleName] = useState<string>('');
   const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] = useState<boolean>(false);
   const [selectedRoleId, setSelectedRoleId] = useState<string>('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRoleList();
@@ -68,10 +69,22 @@ const RoleList: React.FC = () => {
     }
   };
 
+  const handleAddNewRole = () => {
+    navigate('/role/0'); // Use navigate instead of history.push
+  };
+
+  const handleEditRole = (roleId: string) => {
+    navigate(`/role/${roleId}`);
+  }
+
   return (
     <>
       <CustomAppBar />
-      <Paper style={{ margin: '15px' }}>
+      <Paper style={{ margin: '15px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+        <Button variant="contained" color="primary" onClick={handleAddNewRole} style={{ margin: '15px' }}>
+          Add New Role
+        </Button>
+
         <TableContainer>
           <Table>
             <TableHead>
@@ -96,8 +109,7 @@ const RoleList: React.FC = () => {
                         variant="outlined"
                         style={{ marginRight: '8px' }}
                         onClick={() => {
-                          // Add logic to handle edit
-                          console.log(`Edit role: ${role.id}`);
+                          handleEditRole(role.id);
                         }}
                       >
                         Edit

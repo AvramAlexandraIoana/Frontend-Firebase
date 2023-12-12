@@ -4,7 +4,7 @@ import { AuthServiceInterface } from '../../interfaces/Auth/AuthServiceInterface
 import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
 import { auth, firestore } from '../../configuration/firebase';
 import { User } from '../../interfaces/Auth/User';
-import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore';
 import { Role } from '../../interfaces/Auth/Role';
 
 export class AuthService implements AuthServiceInterface {
@@ -75,6 +75,7 @@ export class AuthService implements AuthServiceInterface {
 
       roleListSnapshot.forEach((doc) => {
         const roleData = doc.data() as Role;
+        roleData.id = doc.id;
         roleList.push(roleData);
       });
 
@@ -90,6 +91,41 @@ export class AuthService implements AuthServiceInterface {
       await addDoc(collection(firestore, 'roles'), role);
     } catch (error) {
       console.error('Error adding new role:', error);
+      throw error;
+    }
+  }
+
+  async updateRole(roleId: string, updatedRole: Role): Promise<void> {
+    try {
+      const { name } = updatedRole;
+      const roleRef = doc(firestore, 'roles', roleId);
+  
+      const fieldsToUpdate = {
+        name
+      };
+  
+      await updateDoc(roleRef, fieldsToUpdate);
+    } catch (error) {
+      console.error('Error updating role:', error);
+      throw error;
+    }
+  }
+  
+  
+  async getRoleById(roleId: string): Promise<Role | null> {
+    try {
+      const roleDocRef = doc(firestore, 'roles', roleId);
+      const roleDocSnapshot = await getDoc(roleDocRef);
+
+      if (roleDocSnapshot.exists()) {
+        const roleData = roleDocSnapshot.data() as Role;
+        roleData.id = roleDocRef.id;
+        return roleData;
+      }
+
+      return null; // Return null if the role with the specified ID does not exist
+    } catch (error) {
+      console.error('Error fetching role by ID:', error);
       throw error;
     }
   }
