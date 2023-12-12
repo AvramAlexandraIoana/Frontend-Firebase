@@ -4,11 +4,13 @@ import { Role } from '../../interfaces/Auth/Role';
 import { useNavigate, useParams } from 'react-router-dom';
 import CreateFormBuilder from '../FormBuilder/CreateFormBuilder';
 import CustomAppBar from '../AppBar/CustomAppBar';
-import { Paper } from '@mui/material';
+import { Paper, CircularProgress } from '@mui/material';
+import { createTypography } from '../ComponentFactory/ComponentFactory';
 
 const NewRole: React.FC = () => {
   const authService = new AuthService();
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(true); // Added loading state
   const navigate = useNavigate();
   const { id } = useParams();
   const isUpdate = id !== '0';
@@ -17,23 +19,24 @@ const NewRole: React.FC = () => {
     const fetchRoleData = async () => {
       if (isUpdate) {
         try {
+          setLoading(true); // Set loading to true before starting the fetch
           const roleData: Role | null = await authService.getRoleById(id ?? '');
+          console.log('roleData', roleData);
           if (roleData) {
             setName(roleData.name || '');
           }
         } catch (error) {
           console.error('Error fetching role data:', error);
+        } finally {
+          setLoading(false); // Set loading to false when fetch completes (whether it's successful or encounters an error)
         }
+      } else {
+        setLoading(false); // Set loading to false when fetch completes (whether it's successful or encounters an error)
       }
     };
 
     fetchRoleData();
-  }, [id, isUpdate, authService]);
-
-  // useEffect to set the initial value for 'name' after fetching the role data
-  useEffect(() => {
-    setName(name);
-  }, [name]);
+  }, [id]);
 
   const handleCancel = () => {
     navigate('/role-list');
@@ -72,8 +75,25 @@ const NewRole: React.FC = () => {
   return (
     <>
       <CustomAppBar />
-      <Paper style={{ margin: '15px', padding: '15px' }}>
-        {form}
+      <Paper style={{ margin: '15px', padding: '15px', position: 'relative' }}>
+        {createTypography({ variant: 'h5', children: isUpdate ? 'Update Role' : 'Create Role'})}
+        {loading && (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0
+            }}
+          >
+            <CircularProgress /> {/* Loading indicator */}
+          </div>
+        )}
+        {!loading && form}
       </Paper>
     </>
   );

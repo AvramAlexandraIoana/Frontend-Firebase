@@ -14,6 +14,9 @@ const CustomAppBar: React.FC = () => {
           <Button component={Link} to="/role-list" color="inherit">
             Role List
           </Button>
+          <Button component={Link} to="/profile" color="inherit">
+            Profile
+          </Button>
         </div>
 
         {/* Add more Navbar elements as needed */}
