@@ -102,6 +102,7 @@ const RoleList: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>Role Id</TableCell>
                 <TableCell>Role Name</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
@@ -119,6 +120,7 @@ const RoleList: React.FC = () => {
               ) : (
                 roleList.map((role) => (
                   <TableRow key={role.id}>
+                    <TableCell>{role.id}</TableCell>
                     <TableCell>{role.name}</TableCell>
                     <TableCell>
                       <Button

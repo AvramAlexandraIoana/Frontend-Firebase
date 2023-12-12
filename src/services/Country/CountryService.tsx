@@ -1,6 +1,14 @@
 // CountryService.ts
 
-import { getDatabase, ref, set, get, child, remove } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  child,
+  remove,
+  push,
+} from "firebase/database";
 import { firebase } from "../../configuration/firebase";
 import { Country } from "../../interfaces/Country/Country";
 import { CountryServiceInterface } from "../../interfaces/Country/CountryServiceInterface";
@@ -12,12 +20,13 @@ export class CountryService implements CountryServiceInterface {
   async addCountry(country: Country): Promise<void> {
     try {
       const countryRef = ref(database, "countries");
-      // Set the entire country object as the value
-      await set(countryRef, {
-        [country.id]: {
-          name: country.name,
-          // Add other properties of the country object as needed
-        },
+      // Push a new entry with an auto-generated key
+      const newCountryRef = push(countryRef);
+
+      // Set the data for the new entry
+      await set(newCountryRef, {
+        name: country.name,
+        // Add other properties of the country object as needed
       });
     } catch (error) {
       console.error("Error adding country:", error);
@@ -34,17 +43,18 @@ export class CountryService implements CountryServiceInterface {
       if (snapshot.exists()) {
         // Loop through the snapshot to get country names
         snapshot.forEach((childSnapshot) => {
-          console.log(childSnapshot.val());
           const country: Country = {
             id: childSnapshot.key as string,
-            name: "test",
-            // name: childSnapshot.val() as string,
+            // Map properties from childSnapshot.val()
+            name: childSnapshot.val().name as string,
+            // Add other properties based on your data structure
+            // otherProperty: childSnapshot.val().otherProperty as string,
           };
           countries.push(country);
         });
       }
-      console.log("countries", countries);
 
+      console.log("countries", countries);
       return countries;
     } catch (error) {
       console.error("Error fetching countries:", error);
@@ -54,23 +64,23 @@ export class CountryService implements CountryServiceInterface {
 
   async deleteCountry(countryId: string): Promise<void> {
     try {
-      //const countryRef = ref(database, 'countries', countryId);
-      // Uncomment the following line to remove the country from the database
-      // await remove(countryRef);
+      const countryRef = ref(database, `countries/${countryId}`);
+      // Remove the specific country entry with the given countryId
+      await remove(countryRef);
     } catch (error) {
       console.error("Error deleting country:", error);
       throw error;
     }
   }
 
-  async updateCountry(
-    countryId: string,
-    updatedCountry: Country
-  ): Promise<void> {
+  async updateCountry(updatedCountry: Country): Promise<void> {
     try {
-      //const countryRef = ref(database, 'countries', countryId);
+      const countryRef = ref(database, `countries/${updatedCountry.id}`);
       // Use the set method to update the country
-      // await set(countryRef, { name: updatedCountry.name });
+      await set(countryRef, {
+        name: updatedCountry.name,
+        // Add other properties of the country object as needed
+      });
     } catch (error) {
       console.error("Error updating country:", error);
       throw error;
@@ -79,20 +89,21 @@ export class CountryService implements CountryServiceInterface {
 
   async getCountryById(countryId: string): Promise<Country | null> {
     try {
-      // const countryRef = ref(database, 'countries', countryId);
-      // const snapshot = await get(countryRef);
+      const countryRef = ref(database, `countries/${countryId}`);
+      const snapshot = await get(countryRef);
 
-      //   if (snapshot.exists()) {
-      //     // Create a Country object from the snapshot
-      //     const country: Country = {
-      //       id: snapshot.key as string,
-      //       name: snapshot.key as string,
-      //     };
-      //     return country;
-      //   } else {
-      //     return null;
-      //   }
-      return null;
+      if (snapshot.exists()) {
+        // Create a Country object from the snapshot
+        const country: Country = {
+          id: snapshot.key as string,
+          name: snapshot.val().name as string,
+          // Add other properties based on your data structure
+          // otherProperty: snapshot.val().otherProperty as string,
+        };
+        return country;
+      } else {
+        return null;
+      }
     } catch (error) {
       console.error("Error getting country by ID:", error);
       throw error;

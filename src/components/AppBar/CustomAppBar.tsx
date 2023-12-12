@@ -9,6 +9,9 @@ const CustomAppBar: React.FC = () => {
         <Typography variant="h6">Travel App</Typography>
 
         <div style={{ marginLeft: "auto" }}>
+          <Button component={Link} to="/country-list" color="inherit">
+            Country List
+          </Button>
           <Button component={Link} to="/role-list" color="inherit">
             Role List
           </Button>

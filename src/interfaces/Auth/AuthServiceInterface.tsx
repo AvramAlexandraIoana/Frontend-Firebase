@@ -10,4 +10,8 @@ export interface AuthServiceInterface {
   mapAuthErrorToCustomError(error: AuthError, email: string): CustomAuthError;
   createUserFromUserCredential(userCredential: UserCredential): Promise<User>;
   getRoleList(): Promise<Role[]>;
+  addRole(role: Role): Promise<void>;
+  updateRole(roleId: string, updatedRole: Role): Promise<void>;
+  getRoleById(roleId: string): Promise<Role | null>;
+  deleteRole(roleId: string): Promise<void>;
 }

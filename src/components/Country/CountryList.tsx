@@ -1,3 +1,5 @@
+// CountryList.tsx
+
 import React, { useEffect, useState } from "react";
 import { Country } from "../../interfaces/Country/Country";
 import { CountryService } from "../../services/Country/CountryService";
@@ -29,6 +31,7 @@ const CountryList: React.FC = () => {
   const [newCountryName, setNewCountryName] = useState<string>("");
   const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] =
     useState<boolean>(false);
+  const [selectedCountryId, setSelectedCountryId] = useState<string>("");
   const [selectedCountryName, setSelectedCountryName] = useState<string>("");
   const navigate = useNavigate();
 
@@ -50,7 +53,7 @@ const CountryList: React.FC = () => {
 
   const handleDeleteCountry = async () => {
     try {
-      await countryService.deleteCountry(selectedCountryName);
+      await countryService.deleteCountry(selectedCountryId);
       await fetchCountries();
     } catch (error) {
       console.error("Error deleting country:", error);
@@ -60,11 +63,11 @@ const CountryList: React.FC = () => {
   };
 
   const handleAddNewCountry = () => {
-    navigate("/country/0"); // Use navigate instead of history.push
+    navigate("/country/0");
   };
 
-  const handleEditCountry = (countryName: string) => {
-    // Logic for editing a country, e.g., navigate to a different page
+  const handleEditCountry = (countryId: string) => {
+    navigate(`/country/${countryId}`);
   };
 
   return (
@@ -91,6 +94,7 @@ const CountryList: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
+                <TableCell>Country Id</TableCell>
                 <TableCell>Country Name</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
@@ -107,14 +111,15 @@ const CountryList: React.FC = () => {
                 </TableRow>
               ) : (
                 countries.map((country) => (
-                  <TableRow key={country.name}>
+                  <TableRow key={country.id}>
+                    <TableCell>{country.id}</TableCell>
                     <TableCell>{country.name}</TableCell>
                     <TableCell>
                       <Button
                         variant="outlined"
                         style={{ marginRight: "8px" }}
                         onClick={() => {
-                          handleEditCountry(country.name);
+                          handleEditCountry(country.id);
                         }}
                       >
                         Edit
@@ -123,6 +128,7 @@ const CountryList: React.FC = () => {
                         variant="outlined"
                         color="error"
                         onClick={() => {
+                          setSelectedCountryId(country.id);
                           setSelectedCountryName(country.name);
                           setDeleteConfirmationOpen(true);
                         }}

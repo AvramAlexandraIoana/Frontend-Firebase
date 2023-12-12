@@ -39,15 +39,24 @@ const NewCountry: React.FC = () => {
     };
 
     fetchCountryData();
-  }, [id, isUpdate, countryService]);
+  }, [id]);
 
   const handleCancel = () => {
     navigate("/country-list");
   };
 
   const generateRandomId = (): string => {
-    // You can replace this with your own logic to generate a random id
-    return Math.random().toString(36).substring(7);
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const length = 20;
+    let randomId = "";
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomId += characters.charAt(randomIndex);
+    }
+
+    return randomId;
   };
 
   const handleCreateCountry = async () => {
@@ -55,8 +64,9 @@ const NewCountry: React.FC = () => {
     try {
       const countryId = isUpdate ? id : generateRandomId(); // If updating, use the provided id; otherwise, generate a random id
       if (isUpdate) {
-        // await countryService.updateCountry(countryId, { id, name } as Country);
+        await countryService.updateCountry({ id, name } as Country);
       } else {
+        console.log({ id: countryId, name } as Country);
         await countryService.addCountry({ id: countryId, name } as Country);
       }
       navigate("/country-list");
