@@ -1,7 +1,7 @@
 // authReducer.ts
-import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
-import { User } from '../../interfaces/Auth/User';
-import { AuthActionTypes } from './authActions';
+import { CustomAuthError } from "../../interfaces/Auth/CustomAuthError";
+import { User } from "../../interfaces/Auth/User";
+import { AuthActionTypes } from "./authActions";
 
 interface AuthState {
   user: User | null;
@@ -15,19 +15,32 @@ const initialState: AuthState = {
   loginError: null,
 };
 
-const authReducer = (state: AuthState = initialState, action: AuthActionTypes): AuthState => {
+const authReducer = (
+  state: AuthState = initialState,
+  action: AuthActionTypes
+): AuthState => {
   switch (action.type) {
-    case 'REGISTER_USER_SUCCESS':
+    case "REGISTER_USER_SUCCESS":
       return { ...state, user: action.payload, registrationError: null };
 
-    case 'REGISTER_USER_FAILURE':
-      return { ...state, user: null, registrationError: action.payload, loginError: null };
+    case "REGISTER_USER_FAILURE":
+      return {
+        ...state,
+        user: null,
+        registrationError: action.payload,
+        loginError: null,
+      };
 
-    case 'LOGIN_USER_SUCCESS':
+    case "LOGIN_USER_SUCCESS":
       return { ...state, user: action.payload, loginError: null };
 
-    case 'LOGIN_USER_FAILURE':
-      return { ...state, user: null, loginError: action.payload, registrationError: null };
+    case "LOGIN_USER_FAILURE":
+      return {
+        ...state,
+        user: null,
+        loginError: action.payload,
+        registrationError: null,
+      };
 
     default:
       return state;

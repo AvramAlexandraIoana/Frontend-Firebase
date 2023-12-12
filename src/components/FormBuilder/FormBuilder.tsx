@@ -1,18 +1,18 @@
 // FormBuilder.tsx
-import React from 'react';
-import { TextValidator, ValidatorForm } from 'react-material-ui-form-validator';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { createButton } from '../ComponentFactory/ComponentFactory';
+import React from "react";
+import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { createButton } from "../ComponentFactory/ComponentFactory";
 
 interface FieldConfig {
   label: string;
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type?: 'text' | 'number' | 'email' | 'password';
+  type?: "text" | "number" | "email" | "password";
   validators?: string[];
   errorMessages?: string[];
   showPassword?: boolean;
@@ -38,7 +38,7 @@ class FormBuilder {
       name,
       value,
       onChange,
-      type = 'text',
+      type = "text",
       validators = [],
       errorMessages = [],
       showPassword = false,
@@ -55,13 +55,13 @@ class FormBuilder {
         onChange={onChange}
         name={name}
         value={value}
-        type={showPassword ? 'text' : type}
+        type={showPassword ? "text" : type}
         validators={validators}
         errorMessages={errorMessages}
         autoComplete="off"
         InputProps={{
           endAdornment:
-            type === 'password' ? (
+            type === "password" ? (
               <InputAdornment position="end">
                 <IconButton onClick={onChangeToggle} edge="end">
                   {showPassword ? <Visibility /> : <VisibilityOff />}
@@ -81,16 +81,15 @@ class FormBuilder {
       <ValidatorForm onSubmit={handleSubmit} instantValidate={true}>
         {this.fields}
         {createButton({
-          type: 'submit',
+          type: "submit",
           fullWidth: true,
-          variant: 'contained',
+          variant: "contained",
           sx: { mt: 3, mb: 2, borderRadius: 20 },
-          children: this.buttonLabel
+          children: this.buttonLabel,
         })}
       </ValidatorForm>
     );
   }
-
 }
 
 export default FormBuilder;

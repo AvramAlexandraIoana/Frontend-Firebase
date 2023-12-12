@@ -1,66 +1,75 @@
+// NewCountry.tsx
+
 import React, { useEffect, useState } from "react";
-import { AuthService } from "../../services/Auth/AuthService";
-import { Role } from "../../interfaces/Auth/Role";
+import { CountryService } from "../../services/Country/CountryService";
+import { Country } from "../../interfaces/Country/Country";
 import { useNavigate, useParams } from "react-router-dom";
 import CreateFormBuilder from "../FormBuilder/CreateFormBuilder";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { Paper, CircularProgress } from "@mui/material";
 import { createTypography } from "../ComponentFactory/ComponentFactory";
 
-const NewRole: React.FC = () => {
-  const authService = new AuthService();
+const NewCountry: React.FC = () => {
+  const countryService = new CountryService();
   const [name, setName] = useState("");
-  const [loading, setLoading] = useState(true); // Added loading state
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { id } = useParams();
   const isUpdate = id !== "0";
 
   useEffect(() => {
-    const fetchRoleData = async () => {
+    const fetchCountryData = async () => {
       if (isUpdate) {
         try {
-          setLoading(true); // Set loading to true before starting the fetch
-          const roleData: Role | null = await authService.getRoleById(id ?? "");
-          console.log("roleData", roleData);
-          if (roleData) {
-            setName(roleData.name || "");
+          setLoading(true);
+          const countryData: Country | null =
+            await countryService.getCountryById(id ?? "");
+          console.log("countryData", countryData);
+          if (countryData) {
+            setName(countryData.name || "");
           }
         } catch (error) {
-          console.error("Error fetching role data:", error);
+          console.error("Error fetching country data:", error);
         } finally {
-          setLoading(false); // Set loading to false when fetch completes (whether it's successful or encounters an error)
+          setLoading(false);
         }
       } else {
-        setLoading(false); // Set loading to false when fetch completes (whether it's successful or encounters an error)
+        setLoading(false);
       }
     };
 
-    fetchRoleData();
-  }, [id]);
+    fetchCountryData();
+  }, [id, isUpdate, countryService]);
 
   const handleCancel = () => {
-    navigate("/role-list");
+    navigate("/country-list");
   };
 
-  const handleCreateRole = async () => {
-    console.log(`${isUpdate ? "Updating" : "Creating"} role... ${name}`);
+  const generateRandomId = (): string => {
+    // You can replace this with your own logic to generate a random id
+    return Math.random().toString(36).substring(7);
+  };
+
+  const handleCreateCountry = async () => {
+    console.log(`${isUpdate ? "Updating" : "Creating"} country... ${name}`);
     try {
+      const countryId = isUpdate ? id : generateRandomId(); // If updating, use the provided id; otherwise, generate a random id
       if (isUpdate) {
-        await authService.updateRole(id ?? "", { name: name } as Role);
+        // await countryService.updateCountry(countryId, { id, name } as Country);
       } else {
-        await authService.addRole({ name: name } as Role);
+        await countryService.addCountry({ id: countryId, name } as Country);
       }
-      navigate("/role-list");
+      navigate("/country-list");
     } catch (error) {
       console.error(
-        `${isUpdate ? "Error updating" : "Error creating"} role:`,
+        `${isUpdate ? "Error updating" : "Error creating"} country:`,
         error
       );
     }
   };
 
   const formBuilder = new CreateFormBuilder({
-    buttonLabel: isUpdate ? "Update Role" : "Create Role",
+    buttonLabel: isUpdate ? "Update Country" : "Create Country",
     cancelButtonLabel: "Cancel",
   });
 
@@ -74,7 +83,7 @@ const NewRole: React.FC = () => {
       validators: ["required"],
       errorMessages: ["This field is required"],
     })
-    .buildForm(handleCreateRole, handleCancel);
+    .buildForm(handleCreateCountry, handleCancel);
 
   return (
     <>
@@ -82,7 +91,7 @@ const NewRole: React.FC = () => {
       <Paper style={{ margin: "15px", padding: "15px", position: "relative" }}>
         {createTypography({
           variant: "h5",
-          children: isUpdate ? "Update Role" : "Create Role",
+          children: isUpdate ? "Update Country" : "Create Country",
         })}
         {loading && (
           <div
@@ -97,7 +106,7 @@ const NewRole: React.FC = () => {
               bottom: 0,
             }}
           >
-            <CircularProgress /> {/* Loading indicator */}
+            <CircularProgress />
           </div>
         )}
         {!loading && form}
@@ -106,4 +115,4 @@ const NewRole: React.FC = () => {
   );
 };
 
-export default NewRole;
+export default NewCountry;

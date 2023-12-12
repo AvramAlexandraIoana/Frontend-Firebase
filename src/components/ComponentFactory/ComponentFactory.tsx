@@ -1,6 +1,6 @@
 // ComponentFactory.tsx
-import React from 'react';
-import { Link as MuiLink, Button, Avatar, Typography } from '@mui/material';
+import React from "react";
+import { Link as MuiLink, Button, Avatar, Typography } from "@mui/material";
 
 const createMuiLink = (props: any) => {
   return <MuiLink {...props} />;

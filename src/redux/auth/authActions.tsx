@@ -1,14 +1,14 @@
 // authActions.ts
-import { Dispatch } from 'redux';
-import { User } from '../../interfaces/Auth/User';
-import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
+import { Dispatch } from "redux";
+import { User } from "../../interfaces/Auth/User";
+import { CustomAuthError } from "../../interfaces/Auth/CustomAuthError";
 import {
   REGISTER_USER_SUCCESS,
   REGISTER_USER_FAILURE,
   LOGIN_USER_SUCCESS,
   LOGIN_USER_FAILURE,
-} from './authActionTypes';
-import { AuthService } from '../../services/Auth/AuthService';
+} from "./authActionTypes";
+import { AuthService } from "../../services/Auth/AuthService";
 
 const authService = new AuthService();
 
@@ -40,44 +40,43 @@ export type AuthActionTypes =
   | LoginUserFailureAction;
 
 // Async action creator for register
-export const registerUser = (email: string, password: string) => async (
-    dispatch: Dispatch<AuthActionTypes>
-  ) => {
+export const registerUser =
+  (email: string, password: string) =>
+  async (dispatch: Dispatch<AuthActionTypes>) => {
     try {
-        const result = await authService.registerUser(email, password);
-        console.log(typeof(result));
-        if ('kind' in result) {
-            // This means result is a User
-            dispatch(registerUserSuccess(result));
-        } else {
-            // This means result is a CustomAuthError
-            dispatch(registerUserFailure(result));
-        }
+      const result = await authService.registerUser(email, password);
+      console.log(typeof result);
+      if ("kind" in result) {
+        // This means result is a User
+        dispatch(registerUserSuccess(result));
+      } else {
+        // This means result is a CustomAuthError
+        dispatch(registerUserFailure(result));
+      }
     } catch (error) {
-        // Handle other errors, e.g., network errors
-        console.error('Unexpected error:', error);
+      // Handle other errors, e.g., network errors
+      console.error("Unexpected error:", error);
     }
-};
-  
+  };
 
 // Async action creator for login
-export const loginUser = (email: string, password: string) => async (
-  dispatch: Dispatch<AuthActionTypes>
-) => {
+export const loginUser =
+  (email: string, password: string) =>
+  async (dispatch: Dispatch<AuthActionTypes>) => {
     try {
-    const result = await authService.loginUser(email, password);
-    if ('kind' in result) {
+      const result = await authService.loginUser(email, password);
+      if ("kind" in result) {
         // This means result is a User
         dispatch(loginUserSuccess(result));
-    } else {
+      } else {
         // This means result is a CustomAuthError
         dispatch(loginUserFailure(result));
-    }
+      }
     } catch (error) {
-        // Handle other errors, e.g., network errors
-        console.error('Unexpected error:', error);
+      // Handle other errors, e.g., network errors
+      console.error("Unexpected error:", error);
     }
-};
+  };
 
 // Sync action creators for register success and failure
 export const registerUserSuccess = (user: User): RegisterUserSuccessAction => ({
@@ -85,7 +84,9 @@ export const registerUserSuccess = (user: User): RegisterUserSuccessAction => ({
   payload: user,
 });
 
-export const registerUserFailure = (error: CustomAuthError): RegisterUserFailureAction => ({
+export const registerUserFailure = (
+  error: CustomAuthError
+): RegisterUserFailureAction => ({
   type: REGISTER_USER_FAILURE,
   payload: error,
 });
@@ -96,7 +97,9 @@ export const loginUserSuccess = (user: User): LoginUserSuccessAction => ({
   payload: user,
 });
 
-export const loginUserFailure = (error: CustomAuthError): LoginUserFailureAction => ({
+export const loginUserFailure = (
+  error: CustomAuthError
+): LoginUserFailureAction => ({
   type: LOGIN_USER_FAILURE,
   payload: error,
 });

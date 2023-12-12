@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { AuthService } from "../../services/Auth/AuthService";
-import { Role } from "../../interfaces/Auth/Role";
-import CustomAppBar from "../AppBar/CustomAppBar";
+import { Country } from "../../interfaces/Country/Country";
+import { CountryService } from "../../services/Country/CountryService";
 import {
   Button,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  TextField,
   Table,
   TableBody,
   TableCell,
@@ -19,63 +17,54 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import CustomAppBar from "../AppBar/CustomAppBar";
 
-const authService = new AuthService();
+const countryService = new CountryService();
 
-const RoleList: React.FC = () => {
-  const [roleList, setRoleList] = useState<Role[]>([]);
+const CountryList: React.FC = () => {
+  const [countries, setCountries] = useState<Country[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isAddRoleDialogOpen, setAddRoleDialogOpen] = useState<boolean>(false);
-  const [newRoleName, setNewRoleName] = useState<string>("");
+  const [isAddCountryDialogOpen, setAddCountryDialogOpen] =
+    useState<boolean>(false);
+  const [newCountryName, setNewCountryName] = useState<string>("");
   const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] =
     useState<boolean>(false);
-  const [selectedRoleId, setSelectedRoleId] = useState<string>("");
+  const [selectedCountryName, setSelectedCountryName] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchRoleList();
+    fetchCountries();
   }, []);
 
-  const fetchRoleList = async () => {
+  const fetchCountries = async () => {
     try {
       setIsLoading(true);
-      const roles: Role[] = await authService.getRoleList();
-      setRoleList(roles);
+      const countriesData: Country[] = await countryService.getAllCountries();
+      setCountries(countriesData);
     } catch (error) {
-      console.error("Error fetching role list:", error);
+      console.error("Error fetching countries:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAddRole = async () => {
+  const handleDeleteCountry = async () => {
     try {
-      await authService.addRole({ name: newRoleName } as Role);
-      await fetchRoleList();
+      await countryService.deleteCountry(selectedCountryName);
+      await fetchCountries();
     } catch (error) {
-      console.error("Error adding new role:", error);
-    } finally {
-      setAddRoleDialogOpen(false);
-    }
-  };
-
-  const handleDeleteRole = async () => {
-    try {
-      await authService.deleteRole(selectedRoleId);
-      await fetchRoleList();
-    } catch (error) {
-      console.error("Error deleting role:", error);
+      console.error("Error deleting country:", error);
     } finally {
       setDeleteConfirmationOpen(false);
     }
   };
 
-  const handleAddNewRole = () => {
-    navigate("/role/0"); // Use navigate instead of history.push
+  const handleAddNewCountry = () => {
+    navigate("/country/0"); // Use navigate instead of history.push
   };
 
-  const handleEditRole = (roleId: string) => {
-    navigate(`/role/${roleId}`);
+  const handleEditCountry = (countryName: string) => {
+    // Logic for editing a country, e.g., navigate to a different page
   };
 
   return (
@@ -92,17 +81,17 @@ const RoleList: React.FC = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleAddNewRole}
+          onClick={handleAddNewCountry}
           style={{ margin: "15px" }}
         >
-          Add New Role
+          Add New Country
         </Button>
 
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Role Name</TableCell>
+                <TableCell>Country Name</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -117,15 +106,15 @@ const RoleList: React.FC = () => {
                   </TableCell>
                 </TableRow>
               ) : (
-                roleList.map((role) => (
-                  <TableRow key={role.id}>
-                    <TableCell>{role.name}</TableCell>
+                countries.map((country) => (
+                  <TableRow key={country.name}>
+                    <TableCell>{country.name}</TableCell>
                     <TableCell>
                       <Button
                         variant="outlined"
                         style={{ marginRight: "8px" }}
                         onClick={() => {
-                          handleEditRole(role.id);
+                          handleEditCountry(country.name);
                         }}
                       >
                         Edit
@@ -134,7 +123,7 @@ const RoleList: React.FC = () => {
                         variant="outlined"
                         color="error"
                         onClick={() => {
-                          setSelectedRoleId(role.id);
+                          setSelectedCountryName(country.name);
                           setDeleteConfirmationOpen(true);
                         }}
                       >
@@ -154,16 +143,16 @@ const RoleList: React.FC = () => {
           onClose={() => setDeleteConfirmationOpen(false)}
           maxWidth="xs"
         >
-          <DialogTitle>Delete Role</DialogTitle>
+          <DialogTitle>Delete Country</DialogTitle>
           <DialogContent>
-            <p>Are you sure you want to delete this role?</p>
+            <p>Are you sure you want to delete this country?</p>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setDeleteConfirmationOpen(false)}>
               Cancel
             </Button>
             <Button
-              onClick={handleDeleteRole}
+              onClick={handleDeleteCountry}
               variant="contained"
               color="primary"
             >
@@ -176,4 +165,4 @@ const RoleList: React.FC = () => {
   );
 };
 
-export default RoleList;
+export default CountryList;

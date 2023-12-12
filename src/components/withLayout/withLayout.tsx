@@ -1,5 +1,5 @@
-import React from 'react';
-import Layout from '../../components/Layout/Layout';
+import React from "react";
+import Layout from "../../components/Layout/Layout";
 
 const withLayout = (WrappedComponent: React.ComponentType) => {
   return class extends React.Component {

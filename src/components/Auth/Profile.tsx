@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Avatar, CircularProgress, Grid, Typography } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode'; // Import jwt-decode
-import CustomAppBar from '../AppBar/CustomAppBar';
-import { createButton } from '../ComponentFactory/ComponentFactory';
-import { DecodedToken } from '../../interfaces/Auth/DecodedToken';
-import { AuthService } from '../../services/Auth/AuthService';
+import React, { useEffect, useState } from "react";
+import { Avatar, CircularProgress, Grid, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; // Import jwt-decode
+import CustomAppBar from "../AppBar/CustomAppBar";
+import { createButton } from "../ComponentFactory/ComponentFactory";
+import { DecodedToken } from "../../interfaces/Auth/DecodedToken";
+import { AuthService } from "../../services/Auth/AuthService";
 
 const Profile = () => {
   const [user, setUser] = useState<DecodedToken | null>(null);
@@ -14,17 +14,17 @@ const Profile = () => {
   const authService = new AuthService();
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     if (!token) {
-      navigate('/login');
+      navigate("/login");
     } else {
       try {
         const decodedToken = jwtDecode(token) as DecodedToken | null;
 
         setUser(decodedToken);
       } catch (error) {
-        console.error('Error decoding token:', error);
+        console.error("Error decoding token:", error);
       } finally {
         setLoading(false);
       }
@@ -34,11 +34,11 @@ const Profile = () => {
   const handleLogout = async () => {
     try {
       await authService.logout();
-      localStorage.removeItem('token');
+      localStorage.removeItem("token");
       // Trigger a page reload
       window.location.reload();
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
     }
   };
 
@@ -56,7 +56,7 @@ const Profile = () => {
           <CircularProgress size={50} />
         ) : user ? (
           <>
-            <Avatar alt={user.email}  sx={{ width: 100, height: 100, mb: 2 }} />
+            <Avatar alt={user.email} sx={{ width: 100, height: 100, mb: 2 }} />
             <Typography variant="h4" gutterBottom>
               Welcome, {user.email}!
             </Typography>
@@ -65,12 +65,12 @@ const Profile = () => {
             </Typography>
             {/* Add more user information here as needed */}
             {createButton({
-              type: 'submit',
+              type: "submit",
               fullWidth: false,
-              variant: 'contained',
+              variant: "contained",
               sx: { borderRadius: 20, mt: 3 },
-              children: 'Logout',
-              onClick: handleLogout
+              children: "Logout",
+              onClick: handleLogout,
             })}
           </>
         ) : (

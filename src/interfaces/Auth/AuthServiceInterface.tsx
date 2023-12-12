@@ -1,8 +1,8 @@
 // AuthServiceInterface.tsx
-import { AuthError, UserCredential } from 'firebase/auth';
-import { User } from './User';
-import { CustomAuthError } from './CustomAuthError';
-import { Role } from './Role';
+import { AuthError, UserCredential } from "firebase/auth";
+import { User } from "./User";
+import { CustomAuthError } from "./CustomAuthError";
+import { Role } from "./Role";
 
 export interface AuthServiceInterface {
   registerUser(email: string, password: string): Promise<User | AuthError>;
