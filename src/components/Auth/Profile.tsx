@@ -5,11 +5,13 @@ import { jwtDecode } from 'jwt-decode'; // Import jwt-decode
 import CustomAppBar from '../AppBar/CustomAppBar';
 import { createButton } from '../ComponentFactory/ComponentFactory';
 import { DecodedToken } from '../../interfaces/Auth/DecodedToken';
+import { AuthService } from '../../services/Auth/AuthService';
 
 const Profile = () => {
   const [user, setUser] = useState<DecodedToken | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const authService = new AuthService();
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -29,10 +31,15 @@ const Profile = () => {
     }
   }, [navigate]);
 
-  const handleLogout = () => {
-    // Clear the token from localStorage on logout
-    localStorage.removeItem('token');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      localStorage.removeItem('token');
+      // Trigger a page reload
+      window.location.reload();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (

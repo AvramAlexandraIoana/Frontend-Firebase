@@ -1,4 +1,4 @@
-import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
+import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, UserCredential } from 'firebase/auth';
 import { AuthError } from 'firebase/auth';
 import { AuthServiceInterface } from '../../interfaces/Auth/AuthServiceInterface';
 import { CustomAuthError } from '../../interfaces/Auth/CustomAuthError';
@@ -23,6 +23,15 @@ export class AuthService implements AuthServiceInterface {
       return await this.createUserFromUserCredential(userCredential);
     } catch (error) {
       return this.mapAuthErrorToCustomError(error as AuthError, email);
+    }
+  }
+
+  async logout(): Promise<void> {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Error logging out:', error);
+      throw error;
     }
   }
 
