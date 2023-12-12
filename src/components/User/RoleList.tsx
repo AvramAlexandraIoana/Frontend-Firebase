@@ -20,6 +20,7 @@ const RoleList: React.FC = () => {
     try {
       setIsLoading(true);
       const roles = await authService.getRoleList();
+      console.log('Role List:', roles);
       setRoleList(roles);
     } catch (error) {
       console.error('Error fetching role list:', error);
