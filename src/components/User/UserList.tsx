@@ -1,52 +1,136 @@
 import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+} from '@mui/material';
 import { AuthService } from '../../services/Auth/AuthService';
 import { User } from '../../interfaces/Auth/User';
+import CustomAppBar from '../AppBar/CustomAppBar';
+import { useNavigate } from 'react-router-dom';
 
-const UserList = () => {
+const authService = new AuthService();
+
+const UserList: React.FC = () => {
   const [userList, setUserList] = useState<User[]>([]);
-  const authService = new AuthService();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] = useState<boolean>(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the user list when the component mounts
     fetchUserList();
   }, []);
 
   const fetchUserList = async () => {
     try {
-      const users = await authService.getUserList();
-      console.log(users);
+      setIsLoading(true);
+      const users: User[] = await authService.getUserList();
       setUserList(users);
     } catch (error) {
       console.error('Error fetching user list:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleEditClick = (rowData: User) => {
-    // Implement the edit action, for example, navigate to the edit page
-    console.log('Edit clicked for user:', rowData);
+  const handleEditUser = (userId: string) => {
+    navigate(`/user/${userId}`);
+  };
+
+  const handleDeleteUser = async () => {
+    try {
+     // await authService.deleteUser(selectedUserId);
+      await fetchUserList();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    } finally {
+      setDeleteConfirmationOpen(false);
+    }
   };
 
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-      <thead>
-        <tr>
-          <th style={{ border: '1px solid #ddd', padding: '8px' }}>ID</th>
-          <th style={{ border: '1px solid #ddd', padding: '8px' }}>Email</th>
-          <th style={{ border: '1px solid #ddd', padding: '8px' }}>Edit</th>
-        </tr>
-      </thead>
-      <tbody>
-        {userList.map((user) => (
-          <tr key={user.localId}>
-            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.localId}</td>
-            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{user.email}</td>
-            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-              <button onClick={() => handleEditClick(user)}>Edit</button>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <>
+      <CustomAppBar />
+      <Paper style={{ margin: '15px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>ID</TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={3} style={{ textAlign: 'center', padding: '20px' }}>
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                userList.map((user) => (
+                  <TableRow key={user.localId}>
+                    <TableCell>{user.localId}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outlined"
+                        style={{ marginRight: '8px' }}
+                        onClick={() => {
+                          handleEditUser(user.localId);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                          setSelectedUserId(user.localId);
+                          setDeleteConfirmationOpen(true);
+                        }}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog
+          open={isDeleteConfirmationOpen}
+          onClose={() => setDeleteConfirmationOpen(false)}
+          maxWidth="xs"
+        >
+          <DialogTitle>Delete User</DialogTitle>
+          <DialogContent>
+            <p>Are you sure you want to delete this user?</p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setDeleteConfirmationOpen(false)}>Cancel</Button>
+            <Button onClick={handleDeleteUser} variant="contained" color="primary">
+              Confirm Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Paper>
+    </>
   );
 };
 
