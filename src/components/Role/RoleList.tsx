@@ -102,9 +102,14 @@ const RoleList: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Role Id</TableCell>
-                <TableCell>Role Name</TableCell>
-                <TableCell>Actions</TableCell>
+                {["Role Id", "Role Name", "Actions"].map((header, index) => (
+                  <TableCell
+                    key={index}
+                    style={{ fontWeight: "bold", fontSize: "16px" }}
+                  >
+                    {header}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>

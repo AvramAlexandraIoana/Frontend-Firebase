@@ -49,8 +49,13 @@ const CountryList: React.FC = () => {
 
   const handleDeleteCountry = async () => {
     try {
-      const locations = await locationService.getLocationsByCountryId(selectedCountryId);
-      await Promise.all(locations.map((location: Location) => locationService.deleteLocation(location.id)));
+      const locations =
+        await locationService.getLocationsByCountryId(selectedCountryId);
+      await Promise.all(
+        locations.map((location: Location) =>
+          locationService.deleteLocation(location.id)
+        )
+      );
 
       await countryService.deleteCountry(selectedCountryId);
 
@@ -94,9 +99,16 @@ const CountryList: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Country Id</TableCell>
-                <TableCell>Country Name</TableCell>
-                <TableCell>Actions</TableCell>
+                {["Country Id", "Country Name", "Actions"].map(
+                  (header, index) => (
+                    <TableCell
+                      key={index}
+                      style={{ fontWeight: "bold", fontSize: "16px" }}
+                    >
+                      {header}
+                    </TableCell>
+                  )
+                )}
               </TableRow>
             </TableHead>
             <TableBody>

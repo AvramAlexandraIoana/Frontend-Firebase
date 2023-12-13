@@ -108,10 +108,14 @@ const UserList: React.FC = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Roles</TableCell>
-                <TableCell>Actions</TableCell>
+                {["ID", "Email", "Roles", "Actions"].map((header, index) => (
+                  <TableCell
+                    key={index}
+                    style={{ fontWeight: "bold", fontSize: "16px" }}
+                  >
+                    {header}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -131,10 +135,12 @@ const UserList: React.FC = () => {
                     <TableCell>{user.email}</TableCell>
                     <TableCell>
                       {user.roles &&
-                        user.roles.map((rol: Role) => {
-                          const role = roleList.find((r) => r.id === rol.id);
-                          return role ? role.name : "";
-                        }).join(", ")}
+                        user.roles
+                          .map((rol: Role) => {
+                            const role = roleList.find((r) => r.id === rol.id);
+                            return role ? role.name : "";
+                          })
+                          .join(", ")}
                     </TableCell>
                     <TableCell>
                       <Button

@@ -17,6 +17,7 @@ import {
   TableRow,
   Paper,
   CircularProgress,
+  Typography,
 } from "@mui/material";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +29,10 @@ const LocationList: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] =
     useState<boolean>(false);
-  const [selectedLocationId, setSelectedLocationId] = useState<string>("");
+  const [isViewDialogOpen, setViewDialogOpen] = useState<boolean>(false);
+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
+    null
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -49,7 +53,7 @@ const LocationList: React.FC = () => {
 
   const handleDeleteLocation = async () => {
     try {
-      await locationService.deleteLocation(selectedLocationId);
+      await locationService.deleteLocation(selectedLocation?.id || "");
       await fetchLocations();
     } catch (error) {
       console.error("Error deleting location:", error);
@@ -58,12 +62,23 @@ const LocationList: React.FC = () => {
     }
   };
 
-  const handleAddNewLocation = () => {
-    navigate("/location/0");
+  const handleViewLocation = (location: Location) => {
+    setSelectedLocation(location);
+    setViewDialogOpen(true);
+  };
+
+  const handleViewDialogClose = () => {
+    setViewDialogOpen(false);
   };
 
   const handleEditLocation = (locationId: string) => {
     navigate(`/location/${locationId}`);
+  };
+
+  // Check if the user has a specific role
+  const hasUserRole = (role: string) => {
+    const userRoles = localStorage.getItem("userRoles");
+    return userRoles && userRoles.includes(role);
   };
 
   return (
@@ -77,24 +92,35 @@ const LocationList: React.FC = () => {
           alignItems: "flex-end",
         }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleAddNewLocation}
-          style={{ margin: "15px" }}
-        >
-          Add New Location
-        </Button>
+        {hasUserRole("admin") && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/location/0")}
+            style={{ margin: "15px" }}
+          >
+            Add New Location
+          </Button>
+        )}
 
         <TableContainer>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Location Id</TableCell>
-                <TableCell>Street Address</TableCell>
-                <TableCell>City</TableCell>
-                <TableCell>Country</TableCell>
-                <TableCell>Actions</TableCell>
+                {[
+                  "Location Id",
+                  "Street Address",
+                  "City",
+                  "Country",
+                  "Actions",
+                ].map((header, index) => (
+                  <TableCell
+                    key={index}
+                    style={{ fontWeight: "bold", fontSize: "16px" }}
+                  >
+                    {header}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -115,24 +141,35 @@ const LocationList: React.FC = () => {
                     <TableCell>{location.city}</TableCell>
                     <TableCell>{location.country.name}</TableCell>
                     <TableCell>
+                      {hasUserRole("admin") && (
+                        <Button
+                          variant="outlined"
+                          style={{ marginRight: "8px" }}
+                          onClick={() => {
+                            handleEditLocation(location.id);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      )}
+                      {hasUserRole("admin") && (
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          onClick={() => {
+                            setSelectedLocation(location);
+                            setDeleteConfirmationOpen(true);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      )}
                       <Button
                         variant="outlined"
-                        style={{ marginRight: "8px" }}
-                        onClick={() => {
-                          handleEditLocation(location.id);
-                        }}
+                        style={{ marginLeft: "8px" }}
+                        onClick={() => handleViewLocation(location)}
                       >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setSelectedLocationId(location.id);
-                          setDeleteConfirmationOpen(true);
-                        }}
-                      >
-                        Delete
+                        View
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -166,7 +203,38 @@ const LocationList: React.FC = () => {
           </DialogActions>
         </Dialog>
 
-    
+        {/* View Dialog */}
+        <Dialog
+          open={isViewDialogOpen}
+          onClose={handleViewDialogClose}
+          maxWidth="md"
+        >
+          <DialogTitle style={{ fontWeight: "bold" }}>
+            View Location
+          </DialogTitle>
+          <DialogContent>
+            {selectedLocation && (
+              <>
+                <p>
+                  <strong>Location ID:</strong> {selectedLocation.id}
+                </p>
+                <p>
+                  <strong>Street Address:</strong>{" "}
+                  {selectedLocation.streetAddress}
+                </p>
+                <p>
+                  <strong>City:</strong> {selectedLocation.city}
+                </p>
+                <p>
+                  <strong>Country:</strong> {selectedLocation.country.name}
+                </p>
+              </>
+            )}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleViewDialogClose}>Close</Button>
+          </DialogActions>
+        </Dialog>
       </Paper>
     </>
   );
