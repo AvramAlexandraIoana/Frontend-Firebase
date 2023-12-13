@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, Auth } from "firebase/auth";
+import { getAuth, onAuthStateChanged, User as FirebaseAuthUser } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
 
@@ -17,13 +17,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Get the authentication instance
-const authInstance: Auth = getAuth(app);
+const authInstance = getAuth(app);
 
 // Get the Firestore instance
 const firestoreInstance = getFirestore(app);
 
 // Get the Realtime Database instance
 const databaseInstance = getDatabase(app);
+
+// Subscribe to changes in authentication state
+onAuthStateChanged(authInstance, (user: FirebaseAuthUser | null) => {
+  if (user) {
+    // User is signed in, you can access user data
+    const uid = user.uid;
+    const email = user.email;
+    // Add other user properties as needed
+    console.log("Authenticated user:", user);
+  } else {
+    // User is signed out
+    console.log("No user signed in.");
+  }
+});
 
 export {
   authInstance as auth,
