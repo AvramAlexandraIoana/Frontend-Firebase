@@ -21,7 +21,13 @@ import {
 } from "@mui/material";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { useNavigate } from "react-router-dom";
-
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  getBlob,
+} from "firebase/storage";
 const locationService = new LocationService();
 
 const LocationList: React.FC = () => {
@@ -33,7 +39,9 @@ const LocationList: React.FC = () => {
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(
     null
   );
+  const [locationPhoto, setLocationPhoto] = useState<File | null>(null);
   const navigate = useNavigate();
+  const storage = getStorage();
 
   useEffect(() => {
     fetchLocations();
@@ -62,9 +70,26 @@ const LocationList: React.FC = () => {
     }
   };
 
-  const handleViewLocation = (location: Location) => {
-    setSelectedLocation(location);
-    setViewDialogOpen(true);
+  const handleViewLocation = async (location: Location) => {
+    try {
+      setSelectedLocation(location);
+
+      // Use Firebase Storage SDK to get blob
+      const storageRef = ref(storage, `location-photos/${location.id}`);
+      const blob = await getBlob(storageRef);
+
+      console.log(blob);
+      // Set locationPhoto with Blob details
+      setLocationPhoto(
+        new File([blob], location.photoName || "photo", {
+          type: blob.type,
+        })
+      );
+
+      setViewDialogOpen(true);
+    } catch (error) {
+      console.error("Error fetching location photo blob:", error);
+    }
   };
 
   const handleViewDialogClose = () => {
@@ -228,6 +253,18 @@ const LocationList: React.FC = () => {
                 <p>
                   <strong>Country:</strong> {selectedLocation.country.name}
                 </p>
+                {locationPhoto && (
+                  <img
+                    src={URL.createObjectURL(locationPhoto)}
+                    alt="Location Photo"
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      maxHeight: "300px",
+                      marginTop: "5px",
+                    }}
+                  />
+                )}
               </>
             )}
           </DialogContent>
