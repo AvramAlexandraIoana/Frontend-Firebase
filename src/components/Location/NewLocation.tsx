@@ -9,7 +9,13 @@ import CreateFormBuilder from "../FormBuilder/CreateFormBuilder";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { Paper, CircularProgress } from "@mui/material";
 import { createTypography } from "../ComponentFactory/ComponentFactory";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  getBlob,
+} from "firebase/storage";
 
 const NewLocation: React.FC = () => {
   const locationService = new LocationService();
@@ -50,16 +56,9 @@ const NewLocation: React.FC = () => {
               storage,
               `location-photos/${locationData.id}`
             );
-            const photoURL = await getDownloadURL(storageRef);
-            console.log(photoURL);
 
-            // Fetch and create Blob from download URL using Axios
-            // Fetch and create Blob from download URL using Axios
-            const response = await axios.get(photoURL, {
-              responseType: "blob", // This is important for receiving binary data.
-            });
-            const blob = response.data;
-
+            const blob = await getBlob(storageRef);
+            console.log(blob);
             // Set locationPhoto with Blob details
             setLocationPhoto(
               new File([blob], locationData.photoName || "photo", {
