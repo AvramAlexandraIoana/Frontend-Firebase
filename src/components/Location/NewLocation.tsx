@@ -1,6 +1,5 @@
-// NewLocation.tsx
-
 import React, { useEffect, useState } from "react";
+import axios from "axios"; // Import Axios
 import { LocationService } from "../../services/LocationService";
 import { CountryService } from "../../services/CountryService";
 import { Location } from "../../interfaces/Location/Location";
@@ -8,7 +7,7 @@ import { Country } from "../../interfaces/Country/Country";
 import { useNavigate, useParams } from "react-router-dom";
 import CreateFormBuilder from "../FormBuilder/CreateFormBuilder";
 import CustomAppBar from "../AppBar/CustomAppBar";
-import { Paper, CircularProgress, InputLabel } from "@mui/material";
+import { Paper, CircularProgress } from "@mui/material";
 import { createTypography } from "../ComponentFactory/ComponentFactory";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
@@ -54,9 +53,12 @@ const NewLocation: React.FC = () => {
             const photoURL = await getDownloadURL(storageRef);
             console.log(photoURL);
 
-            // Fetch and create Blob from download URL
-            const response = await fetch(photoURL);
-            const blob = await response.blob();
+            // Fetch and create Blob from download URL using Axios
+            // Fetch and create Blob from download URL using Axios
+            const response = await axios.get(photoURL, {
+              responseType: "blob", // This is important for receiving binary data.
+            });
+            const blob = response.data;
 
             // Set locationPhoto with Blob details
             setLocationPhoto(
