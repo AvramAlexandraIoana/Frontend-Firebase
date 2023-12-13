@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode"; // Import jwt-decode
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { createButton } from "../ComponentFactory/ComponentFactory";
 import { DecodedToken } from "../../interfaces/Auth/DecodedToken";
-import { AuthService } from "../../services/Auth/AuthService";
+import { AuthService } from "../../services/AuthService";
 
 const Profile = () => {
   const [user, setUser] = useState<DecodedToken | null>(null);

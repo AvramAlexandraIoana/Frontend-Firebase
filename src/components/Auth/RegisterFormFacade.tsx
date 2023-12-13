@@ -11,7 +11,7 @@ import {
 } from "../ComponentFactory/ComponentFactory";
 import adaptToLayout from "../Adapter/Adapter";
 import withLayout from "../withLayout/withLayout";
-import { AuthService } from "../../services/Auth/AuthService";
+import { AuthService } from "../../services/AuthService";
 import { CustomAuthError } from "../../interfaces/Auth/CustomAuthError";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

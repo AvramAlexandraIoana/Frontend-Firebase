@@ -9,9 +9,9 @@ import {
   remove,
   push,
 } from "firebase/database";
-import { firebase } from "../../configuration/firebase";
-import { Country } from "../../interfaces/Country/Country";
-import { CountryServiceInterface } from "../../interfaces/Country/CountryServiceInterface";
+import { firebase } from "../configuration/firebase";
+import { Country } from "../interfaces/Country/Country";
+import { CountryServiceInterface } from "../interfaces/Country/CountryServiceInterface";
 
 // Get the database instance from Firebase
 const database = getDatabase(firebase);

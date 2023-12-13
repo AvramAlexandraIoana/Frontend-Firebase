@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Country } from "../../interfaces/Country/Country";
-import { CountryService } from "../../services/Country/CountryService";
+import { CountryService } from "../../services/CountryService";
 import {
   Button,
   Dialog,

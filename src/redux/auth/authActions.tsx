@@ -8,7 +8,7 @@ import {
   LOGIN_USER_SUCCESS,
   LOGIN_USER_FAILURE,
 } from "./authActionTypes";
-import { AuthService } from "../../services/Auth/AuthService";
+import { AuthService } from "../../services/AuthService";
 
 const authService = new AuthService();
 

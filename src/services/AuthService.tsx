@@ -6,10 +6,10 @@ import {
   UserCredential,
 } from "firebase/auth";
 import { AuthError } from "firebase/auth";
-import { AuthServiceInterface } from "../../interfaces/Auth/AuthServiceInterface";
-import { CustomAuthError } from "../../interfaces/Auth/CustomAuthError";
-import { auth, firestore } from "../../configuration/firebase";
-import { User } from "../../interfaces/Auth/User";
+import { AuthServiceInterface } from "../interfaces/Auth/AuthServiceInterface";
+import { CustomAuthError } from "../interfaces/Auth/CustomAuthError";
+import { auth, firestore } from "../configuration/firebase";
+import { User } from "../interfaces/Auth/User";
 import {
   addDoc,
   collection,
@@ -19,7 +19,7 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
-import { Role } from "../../interfaces/Auth/Role";
+import { Role } from "../interfaces/Auth/Role";
 import { UserRecord } from "firebase-admin/auth";
 import { auth as adminAuth } from "firebase-admin";
 

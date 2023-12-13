@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AuthService } from "../../services/Auth/AuthService";
+import { AuthService } from "../../services/AuthService";
 import { Role } from "../../interfaces/Auth/Role";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import {

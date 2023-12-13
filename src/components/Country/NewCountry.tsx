@@ -1,7 +1,7 @@
 // NewCountry.tsx
 
 import React, { useEffect, useState } from "react";
-import { CountryService } from "../../services/Country/CountryService";
+import { CountryService } from "../../services/CountryService";
 import { Country } from "../../interfaces/Country/Country";
 import { useNavigate, useParams } from "react-router-dom";
 import CreateFormBuilder from "../FormBuilder/CreateFormBuilder";

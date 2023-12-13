@@ -14,7 +14,7 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import { AuthService } from "../../services/Auth/AuthService";
+import { AuthService } from "../../services/AuthService";
 import { User } from "../../interfaces/Auth/User";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { useNavigate } from "react-router-dom";
