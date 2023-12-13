@@ -16,4 +16,5 @@ export interface AuthServiceInterface {
   deleteRole(roleId: string): Promise<void>;
   updateUserRoles(userId: string, roles: Role[]): Promise<void>;
   deleteUser(userId: string): Promise<void>;
+  getCurrentUserRoles(): Promise<string[]>;
 }

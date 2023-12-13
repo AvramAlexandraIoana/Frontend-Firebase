@@ -232,6 +232,38 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 
+  async getCurrentUserRoles(): Promise<string[]> {
+    try {
+      const user = await this.getCurrentUser();
+      if (user) {
+        return user.roles.map((role) => role.name);
+      }
+      return [];
+    } catch (error) {
+      console.error("Error fetching current user roles:", error);
+      throw error;
+    }
+  }
+
+  async getCurrentUser(): Promise<User | null> {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const userDocRef = doc(firestore, "users", user.uid);
+        const userDocSnapshot = await getDoc(userDocRef);
+
+        if (userDocSnapshot.exists()) {
+          const userData = userDocSnapshot.data() as User;
+          return userData;
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+      throw error;
+    }
+  }
+
   mapAuthErrorToCustomError(error: AuthError, email: string): CustomAuthError {
     let customMessage = "";
     console.log(error.code);

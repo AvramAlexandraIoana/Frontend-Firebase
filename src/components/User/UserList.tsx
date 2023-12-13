@@ -146,16 +146,6 @@ const UserList: React.FC = () => {
                       >
                         Edit Roles
                       </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setSelectedUser(user);
-                          setDeleteConfirmationOpen(true);
-                        }}
-                      >
-                        Delete
-                      </Button>
                     </TableCell>
                   </TableRow>
                 ))
