@@ -17,11 +17,15 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
+  setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { Role } from "../interfaces/Auth/Role";
-import { UserRecord } from "firebase-admin/auth";
-import { auth as adminAuth } from "firebase-admin";
+import { ListUsersResult, getAuth, UserRecord } from "firebase-admin/auth";
+import { auth as adminAuth } from "firebase-admin"; // Import the admin auth instance
+
 
 export class AuthService implements AuthServiceInterface {
   async registerUser(
@@ -34,9 +38,30 @@ export class AuthService implements AuthServiceInterface {
         email,
         password
       );
-      return await this.createUserFromUserCredential(userCredential);
+
+      const user = await this.createUserFromUserCredential(userCredential);
+
+      // Save user information in the "users" collection
+      await this.saveUserInCollection(user);
+
+      return user;
     } catch (error) {
       return this.mapAuthErrorToCustomError(error as AuthError, email);
+    }
+  }
+
+  async saveUserInCollection(user: User): Promise<void> {
+    try {
+      const usersCollection = collection(firestore, "users");
+      const userDocRef = doc(usersCollection, user.localId);
+  
+      // Include roles in the user document
+      var role = await this.getRoleByName("client");
+      const userDataWithRoles = { ...user, roles: role ? [role] : [] }; // Initialize with an empty array of roles
+      await setDoc(userDocRef, userDataWithRoles);
+    } catch (error) {
+      console.error("Error saving user in collection:", error);
+      throw error;
     }
   }
 
@@ -67,14 +92,17 @@ export class AuthService implements AuthServiceInterface {
 
   async getUserList(): Promise<User[]> {
     try {
+      const usersCollection = collection(firestore, "users");
+      const usersSnapshot = await getDocs(usersCollection);
+
       const userList: User[] = [];
 
-      // Use Firebase Admin SDK to retrieve the list of users
-      //const listUsersResult = await adminAuth().listUsers();
+      usersSnapshot.forEach((doc) => {
+        const userData = doc.data() as User;
+      //  userData.id = doc.id;
+        userList.push(userData);
+      });
 
-
-
-      console.log("Final User List:", userList);
       return userList;
     } catch (error) {
       console.error("Error fetching user list:", error);
@@ -143,12 +171,63 @@ export class AuthService implements AuthServiceInterface {
     }
   }
 
+  async getRoleByName(roleName: string): Promise<Role | null> {
+    try {
+      const rolesCollection = collection(firestore, "roles");
+  
+      // Use a query to find the role with the specified name
+      const querySnapshot = await getDocs(
+        query(rolesCollection, where("name", "==", roleName))
+      );
+  
+      if (!querySnapshot.empty) {
+        const roleDoc = querySnapshot.docs[0];
+        const roleData = roleDoc.data() as Role;
+        roleData.id = roleDoc.id;
+        return roleData;
+      }
+  
+      return null; // Return null if the role with the specified name does not exist
+    } catch (error) {
+      console.error("Error fetching role by name:", error);
+      throw error;
+    }
+  }
+
   async deleteRole(roleId: string): Promise<void> {
     try {
       const roleRef = doc(firestore, "roles", roleId);
       await deleteDoc(roleRef);
     } catch (error) {
       console.error("Error deleting role:", error);
+      throw error;
+    }
+  }
+
+  async updateUserRoles(userId: string, roles: Role[]): Promise<void> {
+    try {
+      const userDocRef = doc(firestore, "users", userId);
+
+      // Update the roles field in the user document
+      await updateDoc(userDocRef, {
+        roles: roles.map((role) => ({ id: role.id, name: role.name })),
+      });
+    } catch (error) {
+      console.error("Error updating user roles:", error);
+      throw error;
+    }
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    try {
+      // Delete user document from Firestore
+      const userDocRef = doc(collection(firestore, 'users'), userId);
+      await deleteDoc(userDocRef);
+
+      // Delete user from Firebase Authentication
+      //await getAuth().deleteUser(userId);
+    } catch (error) {
+      console.error('Error deleting user:', error);
       throw error;
     }
   }
@@ -177,6 +256,7 @@ export class AuthService implements AuthServiceInterface {
       refreshToken: userCredential.user?.refreshToken || "",
       expiresIn: 3600,
       localId: userCredential.user?.uid || "",
+      roles: [],
     };
     return user;
   }

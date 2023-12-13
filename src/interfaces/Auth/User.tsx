@@ -1,3 +1,5 @@
+import { Role } from "./Role";
+
 export interface User {
   kind: string;
   idToken: string;
@@ -5,4 +7,5 @@ export interface User {
   refreshToken: string;
   expiresIn: number;
   localId: string;
+  roles: Role[];
 }

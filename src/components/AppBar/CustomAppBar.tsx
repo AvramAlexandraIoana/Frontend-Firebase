@@ -15,6 +15,9 @@ const CustomAppBar: React.FC = () => {
           <Button component={Link} to="/country-list" color="inherit">
             Country List
           </Button>
+          <Button component={Link} to="/user-list" color="inherit">
+            User List
+          </Button>
           <Button component={Link} to="/role-list" color="inherit">
             Role List
           </Button>

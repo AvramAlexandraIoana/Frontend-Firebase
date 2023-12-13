@@ -23,6 +23,7 @@ function App() {
           <Route path="/register" element={<RegisterFormFacade />} />
           <Route path="/login" element={<LoginFormFacade />} />
           <Route path="/profile" element={<Profile />} />
+
           <Route path="/user-list" element={<UserList />} />
 
           <Route path="/role-list" element={<RoleList />} />
