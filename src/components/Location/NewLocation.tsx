@@ -37,13 +37,33 @@ const NewLocation: React.FC = () => {
         setCountries(countriesData);
 
         if (isUpdate) {
-          const locationData: Location | null = await locationService.getLocationById(id ?? "");
+          const locationData: Location | null =
+            await locationService.getLocationById(id ?? "");
           console.log("locationData", locationData);
           if (locationData) {
             setStreetAddress(locationData.streetAddress || "");
             setCity(locationData.city || "");
             setCountryId(locationData.country.id || "");
-            setPhotoName(locationData.photoName || ""); // Add this line
+            setPhotoName(locationData.photoName || "");
+
+            // Use Firebase Storage SDK to get download URL
+            const storageRef = ref(
+              storage,
+              `location-photos/${locationData.id}`
+            );
+            const photoURL = await getDownloadURL(storageRef);
+            console.log(photoURL);
+
+            // Fetch and create Blob from download URL
+            const response = await fetch(photoURL);
+            const blob = await response.blob();
+
+            // Set locationPhoto with Blob details
+            setLocationPhoto(
+              new File([blob], locationData.photoName || "photo", {
+                type: blob.type,
+              })
+            );
           }
         }
       } catch (error) {
@@ -68,7 +88,8 @@ const NewLocation: React.FC = () => {
   };
 
   const generateRandomId = (): string => {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const length = 20;
     let randomId = "";
 
@@ -118,7 +139,10 @@ const NewLocation: React.FC = () => {
 
       navigate("/location-list");
     } catch (error) {
-      console.error(`${isUpdate ? "Error updating" : "Error creating"} location:`, error);
+      console.error(
+        `${isUpdate ? "Error updating" : "Error creating"} location:`,
+        error
+      );
     }
   };
 
@@ -141,7 +165,8 @@ const NewLocation: React.FC = () => {
       label: "Street Address",
       name: "streetAddress",
       value: streetAddress,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setStreetAddress(e.target.value),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+        setStreetAddress(e.target.value),
       validators: ["required"],
       errorMessages: ["This field is required"],
     })
@@ -149,21 +174,27 @@ const NewLocation: React.FC = () => {
       label: "City",
       name: "city",
       value: city,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCity(e.target.value),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+        setCity(e.target.value),
       validators: ["required"],
       errorMessages: ["This field is required"],
     })
-    .addFileInput({
-      label: "Upload Location Photo",
-      name: "locationPhoto",
-      value: locationPhoto,
-      onChange: handleFileChange
-    }, true, true)
+    .addFileInput(
+      {
+        label: "Upload Location Photo",
+        name: "locationPhoto",
+        value: locationPhoto,
+        onChange: handleFileChange,
+      },
+      true,
+      true
+    )
     .addSelectField({
       label: "Country",
       name: "country",
       value: countryId,
-      onChange: (e: React.ChangeEvent<{ value: unknown }>) => setCountryId(e.target.value as string),
+      onChange: (e: React.ChangeEvent<{ value: unknown }>) =>
+        setCountryId(e.target.value as string),
       options: countries.map((country) => ({
         label: country.name,
         value: country.id,

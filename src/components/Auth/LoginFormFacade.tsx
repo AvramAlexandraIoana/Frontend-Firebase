@@ -28,7 +28,6 @@ const LoginFormFacade = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token) {
       navigate("/profile");
     }
@@ -37,8 +36,7 @@ const LoginFormFacade = () => {
   useEffect(() => {
     if (authState.loginError) {
       toast.error(
-        authState.loginError.customMessage ||
-          "Login failed. Please try again."
+        authState.loginError.customMessage || "Login failed. Please try again."
       );
       dispatch({ type: "LOGIN_USER_FAILURE", payload: null });
     }
@@ -46,11 +44,12 @@ const LoginFormFacade = () => {
 
   useEffect(() => {
     if (authState.user) {
+      console.log("jere");
       localStorage.setItem("token", authState.user.idToken);
 
       // Set userRoles in localStorage after successful login
       setUserRolesInLocalStorage();
-      
+
       navigate("/profile");
     }
   }, [authState.user, navigate]);
@@ -115,9 +114,7 @@ const LoginFormFacade = () => {
       })}
       {createTypography({ variant: "h5", children: "Login" })}
       {form}
-      {loading ? (
-        <CircularProgress size={25} />
-      ) : null}
+      {loading ? <CircularProgress size={25} /> : null}
       <Grid container justifyContent="flex-end">
         <Grid item>
           {createMuiLink({

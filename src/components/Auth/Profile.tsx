@@ -35,6 +35,7 @@ const Profile = () => {
     try {
       await authService.logout();
       localStorage.removeItem("token");
+      localStorage.removeItem("userRoles");
       // Trigger a page reload
       window.location.reload();
     } catch (error) {

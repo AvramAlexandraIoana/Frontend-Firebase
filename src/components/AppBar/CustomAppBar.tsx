@@ -37,6 +37,16 @@ const CustomAppBar: React.FC = () => {
         <Typography variant="h6">Travel App</Typography>
 
         <div style={{ marginLeft: "auto" }}>
+          {(userRoles.includes("admin") || userRoles.includes("agentie")) && (
+            <Button component={Link} to="/location-list" color="inherit">
+              Location List
+            </Button>
+          )}
+          {userRoles.includes("admin") && (
+            <Button component={Link} to="/country-list" color="inherit">
+              Country List
+            </Button>
+          )}
           {userRoles.includes("admin") && (
             <Button component={Link} to="/user-list" color="inherit">
               User List
@@ -45,17 +55,6 @@ const CustomAppBar: React.FC = () => {
           {userRoles.includes("admin") && (
             <Button component={Link} to="/role-list" color="inherit">
               Role List
-            </Button>
-          )}
-          {userRoles.includes("admin") ||
-            (userRoles.includes("agentie") && (
-              <Button component={Link} to="/location-list" color="inherit">
-                Location List
-              </Button>
-            ))}
-          {userRoles.includes("admin") && (
-            <Button component={Link} to="/country-list" color="inherit">
-              Country List
             </Button>
           )}
           <Button component={Link} to="/profile" color="inherit">

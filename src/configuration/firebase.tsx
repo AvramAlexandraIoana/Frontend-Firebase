@@ -40,6 +40,7 @@ onAuthStateChanged(authInstance, (user) => {
   } else {
     // User is signed out
     console.log("No user signed in.");
+    localStorage.removeItem("userRoles");
   }
 });
 
