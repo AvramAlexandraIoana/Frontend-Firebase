@@ -23,9 +23,6 @@ import {
   where,
 } from "firebase/firestore";
 import { Role } from "../interfaces/Auth/Role";
-import { ListUsersResult, getAuth, UserRecord } from "firebase-admin/auth";
-import { auth as adminAuth } from "firebase-admin"; // Import the admin auth instance
-
 
 export class AuthService implements AuthServiceInterface {
   async registerUser(
@@ -54,7 +51,7 @@ export class AuthService implements AuthServiceInterface {
     try {
       const usersCollection = collection(firestore, "users");
       const userDocRef = doc(usersCollection, user.localId);
-  
+
       // Include roles in the user document
       var role = await this.getRoleByName("client");
       const userDataWithRoles = { ...user, roles: role ? [role] : [] }; // Initialize with an empty array of roles
@@ -99,7 +96,7 @@ export class AuthService implements AuthServiceInterface {
 
       usersSnapshot.forEach((doc) => {
         const userData = doc.data() as User;
-      //  userData.id = doc.id;
+        //  userData.id = doc.id;
         userList.push(userData);
       });
 
@@ -174,19 +171,19 @@ export class AuthService implements AuthServiceInterface {
   async getRoleByName(roleName: string): Promise<Role | null> {
     try {
       const rolesCollection = collection(firestore, "roles");
-  
+
       // Use a query to find the role with the specified name
       const querySnapshot = await getDocs(
         query(rolesCollection, where("name", "==", roleName))
       );
-  
+
       if (!querySnapshot.empty) {
         const roleDoc = querySnapshot.docs[0];
         const roleData = roleDoc.data() as Role;
         roleData.id = roleDoc.id;
         return roleData;
       }
-  
+
       return null; // Return null if the role with the specified name does not exist
     } catch (error) {
       console.error("Error fetching role by name:", error);
@@ -221,13 +218,13 @@ export class AuthService implements AuthServiceInterface {
   async deleteUser(userId: string): Promise<void> {
     try {
       // Delete user document from Firestore
-      const userDocRef = doc(collection(firestore, 'users'), userId);
+      const userDocRef = doc(collection(firestore, "users"), userId);
       await deleteDoc(userDocRef);
 
       // Delete user from Firebase Authentication
       //await getAuth().deleteUser(userId);
     } catch (error) {
-      console.error('Error deleting user:', error);
+      console.error("Error deleting user:", error);
       throw error;
     }
   }

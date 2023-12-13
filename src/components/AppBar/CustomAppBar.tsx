@@ -47,11 +47,12 @@ const CustomAppBar: React.FC = () => {
               Role List
             </Button>
           )}
-          {userRoles.includes("admin") && (
-            <Button component={Link} to="/location-list" color="inherit">
-              Location List
-            </Button>
-          )}
+          {userRoles.includes("admin") ||
+            (userRoles.includes("agentie") && (
+              <Button component={Link} to="/location-list" color="inherit">
+                Location List
+              </Button>
+            ))}
           {userRoles.includes("admin") && (
             <Button component={Link} to="/country-list" color="inherit">
               Country List
