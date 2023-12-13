@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { LockOutlined } from "@mui/icons-material";
-import { Grid, CircularProgress } from "@mui/material";
+import { Grid, CircularProgress, Button } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import FormBuilder from "../FormBuilder/FormBuilder";
 import {
@@ -14,59 +14,61 @@ import { loginUser } from "../../redux/auth/authActions";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { toast, ToastContainer } from "react-toastify";
+import { AuthService } from "../../services/AuthService";
 
 const LoginFormFacade = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false); // New loading state
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const authState = useSelector((state: RootState) => state.auth); // Get the entire auth state
-
-  console.log("real time auth state", authState);
-
-  const handleLogin = async () => {
-    setLoading(true); // Set loading to true before making the async call
-    await loginUser(email, password)(dispatch);
-    setLoading(false); // Set loading to false after the async call completes
-  };
+  const authService = new AuthService();
+  const authState = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    // Check for the token in localStorage
     const token = localStorage.getItem("token");
 
     if (token) {
-      // If token exists, redirect to the profile page
       navigate("/profile");
     }
   }, [navigate]);
 
-  // useEffect to monitor changes in authState.loginError
   useEffect(() => {
     if (authState.loginError) {
-      // Display a pop-up message for the login error
       toast.error(
         authState.loginError.customMessage ||
-          "Registration failed. Please try again."
+          "Login failed. Please try again."
       );
-
-      // Optional: Clear the login error in the state after displaying the message
       dispatch({ type: "LOGIN_USER_FAILURE", payload: null });
     }
   }, [authState.loginError, dispatch]);
 
-  // useEffect to redirect to login after successful registration
   useEffect(() => {
     if (authState.user) {
-      // Set the authentication token in local storage
       localStorage.setItem("token", authState.user.idToken);
 
-      // Redirect to the profile page after successful login
+      // Set userRoles in localStorage after successful login
+      setUserRolesInLocalStorage();
+      
       navigate("/profile");
     }
   }, [authState.user, navigate]);
+
+  const setUserRolesInLocalStorage = async () => {
+    try {
+      const userRoles = await authService.getCurrentUserRoles();
+      localStorage.setItem("userRoles", JSON.stringify(userRoles));
+    } catch (error) {
+      console.error("Error setting user roles in localStorage:", error);
+    }
+  };
+
+  const handleLogin = async () => {
+    setLoading(true);
+    await loginUser(email, password)(dispatch);
+    setLoading(false);
+  };
 
   const formBuilder = new FormBuilder({ buttonLabel: "Login" });
 
@@ -114,7 +116,7 @@ const LoginFormFacade = () => {
       {createTypography({ variant: "h5", children: "Login" })}
       {form}
       {loading ? (
-        <CircularProgress size={25} /> // Centered loading indicator
+        <CircularProgress size={25} />
       ) : null}
       <Grid container justifyContent="flex-end">
         <Grid item>
