@@ -20,6 +20,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { Role } from "../../interfaces/Auth/Role";
+import { UserRecord } from "firebase-admin/auth";
+import { auth as adminAuth } from "firebase-admin";
 
 export class AuthService implements AuthServiceInterface {
   async registerUser(
@@ -66,26 +68,11 @@ export class AuthService implements AuthServiceInterface {
   async getUserList(): Promise<User[]> {
     try {
       const userList: User[] = [];
-      const userListSnapshot = await getDocs(collection(firestore, "roles"));
-      console.log("User List Snapshot:", userListSnapshot.docs.length);
 
-      userListSnapshot.forEach((doc) => {
-        const userData = doc.data();
-        console.log("User Data:", userData);
+      // Use Firebase Admin SDK to retrieve the list of users
+      //const listUsersResult = await adminAuth().listUsers();
 
-        if (userData && userData.uid && userData.email) {
-          const user: User = {
-            kind: "identitytoolkit#SignupNewUserResponse", // Adjust as needed
-            idToken: "",
-            email: userData.email || "",
-            refreshToken: "",
-            expiresIn: 0,
-            localId: userData.uid || "",
-          };
 
-          userList.push(user);
-        }
-      });
 
       console.log("Final User List:", userList);
       return userList;
