@@ -11,6 +11,8 @@ import RoleList from "./components/Role/RoleList";
 import NewRole from "./components/Role/NewRole";
 import CountryList from "./components/Country/CountryList";
 import NewCountry from "./components/Country/NewCountry";
+import LocationList from "./components/Location/LocationList";
+import NewLocation from "./components/Location/NewLocation";
 
 function App() {
   return (
@@ -28,6 +30,9 @@ function App() {
 
           <Route path="/country-list" element={<CountryList />} />
           <Route path="/country/:id" element={<NewCountry />} />
+
+          <Route path="/location-list" element={<LocationList />} />
+          <Route path="/location/:id" element={<NewLocation />} />
         </Routes>
       </>
     </Provider>

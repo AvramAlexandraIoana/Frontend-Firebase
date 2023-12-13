@@ -1,6 +1,11 @@
 // FormBuilder.tsx
+
 import React from "react";
-import { TextValidator, ValidatorForm } from "react-material-ui-form-validator";
+import {
+  TextValidator,
+  ValidatorForm,
+  SelectValidator,
+} from "react-material-ui-form-validator";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
@@ -17,6 +22,16 @@ interface FieldConfig {
   errorMessages?: string[];
   showPassword?: boolean;
   onChangeToggle?: () => void;
+}
+
+interface SelectFieldConfig {
+  label: string;
+  name: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<{ value: unknown }>) => void;
+  options: { label: string; value: string }[];
+  validators?: string[];
+  errorMessages?: string[];
 }
 
 interface CreateFormBuilderConfig {
@@ -76,6 +91,35 @@ class CreateFormBuilder {
     );
 
     this.fields.push(textField);
+    return this; // for method chaining
+  }
+
+  addSelectField(config: SelectFieldConfig): CreateFormBuilder {
+    const { label, name, value, onChange, options, validators = [], errorMessages = [] } = config;
+
+    const selectField = (
+      <SelectValidator
+        key={name}
+        fullWidth
+        variant="outlined"
+        margin="normal"
+        label={label}
+        onChange={onChange}
+        name={name}
+        value={value}
+        validators={validators}
+        errorMessages={errorMessages}
+        autoComplete="off"
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </SelectValidator>
+    );
+
+    this.fields.push(selectField);
     return this; // for method chaining
   }
 
