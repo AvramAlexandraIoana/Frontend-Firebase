@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, User as FirebaseAuthUser } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getDatabase } from "firebase/database";
+import { getStorage } from "firebase/storage"; // Add this import for Firebase Storage
 
 const firebaseConfig = {
   apiKey: "AIzaSyDEIrLSFC3NmuNWXrvyrF1Hs7ekgHZkRp8",
@@ -25,8 +26,11 @@ const firestoreInstance = getFirestore(app);
 // Get the Realtime Database instance
 const databaseInstance = getDatabase(app);
 
+// Get the Storage instance
+const storageInstance = getStorage(app);
+
 // Subscribe to changes in authentication state
-onAuthStateChanged(authInstance, (user: FirebaseAuthUser | null) => {
+onAuthStateChanged(authInstance, (user) => {
   if (user) {
     // User is signed in, you can access user data
     const uid = user.uid;
@@ -43,5 +47,6 @@ export {
   authInstance as auth,
   firestoreInstance as firestore,
   databaseInstance as database,
+  storageInstance as storage, // Export the Storage instance
   app as firebase,
 };

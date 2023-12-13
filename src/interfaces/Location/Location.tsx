@@ -5,4 +5,5 @@ export interface Location {
     streetAddress: string;
     city: string;
     country: Country; 
+    photoURL: string; // Add the photo URL to the Location interface
 }

@@ -24,15 +24,7 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
         const locationRef = ref(database, "locations");
         const newLocationRef = push(locationRef);
   
-        await set(newLocationRef, {
-          streetAddress: location.streetAddress,
-          city: location.city,
-          country: {
-            id: location.country.id,
-            name: location.country.name,
-          },
-          // Add other properties of the location object as needed
-        });
+        await set(newLocationRef, location);
       } catch (error) {
         console.error("Error adding location:", error);
         throw error;
@@ -51,6 +43,7 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
               id: childSnapshot.key as string,
               streetAddress: childSnapshot.val().streetAddress as string,
               city: childSnapshot.val().city as string,
+              photoURL: childSnapshot.val().photoUrl as string,
               country: {
                 id: childSnapshot.val().country.id as string,
                 name: childSnapshot.val().country.name as string,
@@ -83,15 +76,7 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
     async updateLocation(updatedLocation: Location): Promise<void> {
       try {
         const locationRef = ref(database, `locations/${updatedLocation.id}`);
-        await set(locationRef, {
-          streetAddress: updatedLocation.streetAddress,
-          city: updatedLocation.city,
-          country: {
-            id: updatedLocation.country.id,
-            name: updatedLocation.country.name,
-          },
-          // Add other properties of the location object as needed
-        });
+        await set(locationRef, updatedLocation);
       } catch (error) {
         console.error("Error updating location:", error);
         throw error;
@@ -108,10 +93,11 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
             id: snapshot.key as string,
             streetAddress: snapshot.val().streetAddress as string,
             city: snapshot.val().city as string,
+            photoURL: "",
             country: {
               id: snapshot.val().country.id as string,
               name: snapshot.val().country.name as string,
-            },
+            }
             // Add other properties based on your data structure
             // otherProperty: snapshot.val().otherProperty as string,
           };
@@ -143,10 +129,11 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
                 id: childSnapshot.key as string,
                 streetAddress: childSnapshot.val().streetAddress as string,
                 city: childSnapshot.val().city as string,
+                photoURL: "",
                 country: {
                   id: childSnapshot.val().country.id as string,
                   name: childSnapshot.val().country.name as string,
-                },
+                }
                 // Add other properties based on your data structure
                 // otherProperty: childSnapshot.val().otherProperty as string,
               };

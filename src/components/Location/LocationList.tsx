@@ -33,6 +33,7 @@ const LocationList: React.FC = () => {
     streetAddress: "",
     city: "",
     country: { id: "", name: "" },
+    photoURL: ""
   });
   const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] =
     useState<boolean>(false);

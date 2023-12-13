@@ -1,3 +1,5 @@
+// NewLocation.tsx
+
 import React, { useEffect, useState } from "react";
 import { LocationService } from "../../services/LocationService";
 import { CountryService } from "../../services/CountryService";
@@ -6,8 +8,9 @@ import { Country } from "../../interfaces/Country/Country";
 import { useNavigate, useParams } from "react-router-dom";
 import CreateFormBuilder from "../FormBuilder/CreateFormBuilder";
 import CustomAppBar from "../AppBar/CustomAppBar";
-import { Paper, CircularProgress } from "@mui/material";
+import { Paper, CircularProgress, InputLabel } from "@mui/material";
 import { createTypography } from "../ComponentFactory/ComponentFactory";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const NewLocation: React.FC = () => {
   const locationService = new LocationService();
@@ -15,6 +18,7 @@ const NewLocation: React.FC = () => {
   const [streetAddress, setStreetAddress] = useState("");
   const [city, setCity] = useState("");
   const [countryId, setCountryId] = useState("");
+  const [locationPhoto, setLocationPhoto] = useState<File | null>(null);
   const [countries, setCountries] = useState<Country[]>([]);
   const [loadingCountries, setLoadingCountries] = useState(true);
   const [loadingLocation, setLoadingLocation] = useState(true);
@@ -22,6 +26,7 @@ const NewLocation: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isUpdate = id !== "0";
+  const storage = getStorage();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,15 +35,12 @@ const NewLocation: React.FC = () => {
         const countriesData: Country[] = await countryService.getAllCountries();
         setCountries(countriesData);
 
-        // If it's an update, fetch location data and set initial country value
         if (isUpdate) {
-          const locationData: Location | null =
-            await locationService.getLocationById(id ?? "");
+          const locationData: Location | null = await locationService.getLocationById(id ?? "");
           console.log("locationData", locationData);
           if (locationData) {
             setStreetAddress(locationData.streetAddress || "");
             setCity(locationData.city || "");
-            // Set the initial value of the country state to the ID of the country
             setCountryId(locationData.country.id || "");
           }
         }
@@ -54,7 +56,6 @@ const NewLocation: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    // Check if both loadingCountries and loadingLocation are false
     if (!loadingCountries && !loadingLocation) {
       setLoading(false);
     }
@@ -65,8 +66,7 @@ const NewLocation: React.FC = () => {
   };
 
   const generateRandomId = (): string => {
-    const characters =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     const length = 20;
     let randomId = "";
 
@@ -90,12 +90,22 @@ const NewLocation: React.FC = () => {
         return;
       }
 
+      let photoURL = "";
+      if (locationPhoto) {
+        const filename = isUpdate ? id : generateRandomId();
+        const storageRef = ref(storage, `location-photos/${filename}`);
+        await uploadBytes(storageRef, locationPhoto);
+        photoURL = await getDownloadURL(storageRef);
+      }
+
       const locationData = {
         id: locationId,
         streetAddress,
         city,
         country: selectedCountry,
+        photoURL
       } as Location;
+      console.log(locationData);
 
       if (isUpdate) {
         await locationService.updateLocation(locationData);
@@ -105,12 +115,18 @@ const NewLocation: React.FC = () => {
 
       navigate("/location-list");
     } catch (error) {
-      console.error(
-        `${isUpdate ? "Error updating" : "Error creating"} location:`,
-        error
-      );
+      console.error(`${isUpdate ? "Error updating" : "Error creating"} location:`, error);
     }
   };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    console.log("file", file);
+    if (file) {
+      setLocationPhoto(file);
+    }
+  };
+
 
   const formBuilder = new CreateFormBuilder({
     buttonLabel: isUpdate ? "Update Location" : "Create Location",
@@ -122,8 +138,7 @@ const NewLocation: React.FC = () => {
       label: "Street Address",
       name: "streetAddress",
       value: streetAddress,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-        setStreetAddress(e.target.value),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setStreetAddress(e.target.value),
       validators: ["required"],
       errorMessages: ["This field is required"],
     })
@@ -131,17 +146,21 @@ const NewLocation: React.FC = () => {
       label: "City",
       name: "city",
       value: city,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-        setCity(e.target.value),
+      onChange: (e: React.ChangeEvent<HTMLInputElement>) => setCity(e.target.value),
       validators: ["required"],
       errorMessages: ["This field is required"],
     })
+    .addFileInput({
+      label: "Upload Location Photo",
+      name: "locationPhoto",
+      value: locationPhoto,
+      onChange: handleFileChange
+    }, true, true)
     .addSelectField({
       label: "Country",
       name: "country",
       value: countryId,
-      onChange: (e: React.ChangeEvent<{ value: unknown }>) =>
-        setCountryId(e.target.value as string),
+      onChange: (e: React.ChangeEvent<{ value: unknown }>) => setCountryId(e.target.value as string),
       options: countries.map((country) => ({
         label: country.name,
         value: country.id,

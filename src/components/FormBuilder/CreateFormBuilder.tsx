@@ -11,7 +11,8 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { createButton } from "../ComponentFactory/ComponentFactory";
-import { MenuItem } from "@mui/material";
+import { Input, InputLabel, MenuItem, TextField } from "@mui/material";
+import { FileUploadOutlined } from "@mui/icons-material";
 
 interface FieldConfig {
   label: string;
@@ -33,6 +34,13 @@ interface SelectFieldConfig {
   options: { label: string; value: string }[];
   validators?: string[];
   errorMessages?: string[];
+}
+
+interface FileConfig {
+  label: string;
+  name: string;
+  value?: File | null; // Make value optional
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 interface CreateFormBuilderConfig {
@@ -120,6 +128,54 @@ class CreateFormBuilder {
     );
   
     this.fields.push(selectField);
+    return this; // for method chaining
+  }
+
+  addFileInput(config: FileConfig, displayFileName?: boolean, displayPreview?: boolean): CreateFormBuilder {
+    const { label, name, onChange } = config;
+  
+    const fileInput = (
+      <div>
+        {displayFileName && (
+          <span style={{ marginBottom: "10px" }}>
+            {config.value ? config.value.name : "No file selected"}
+          </span>
+        )}
+        <IconButton component="label">
+          <FileUploadOutlined />
+          <input
+            style={{ display: "none" }}
+            type="file"
+            hidden
+            onChange={onChange}
+            name={name}
+          />
+        </IconButton>
+        {displayPreview && config.value && (
+          <div style={{ marginTop: "10px", width: "100%", maxWidth: "300px" }}>
+            <InputLabel>Image Preview:</InputLabel>
+            <img
+              src={URL.createObjectURL(config.value)}
+              alt="Location Photo Preview"
+              style={{ width: "100%", height: "auto", maxHeight: "300px", marginTop: "5px" }}
+            />
+          </div>
+        )}
+      </div>
+    );
+  
+    this.fields.push(fileInput);
+    return this; // for method chaining
+  }
+  
+  addImageField(label: string, name: string, value: string): CreateFormBuilder {
+    const imageField = (
+      <div key={name}>
+        <InputLabel>{name}</InputLabel>
+      </div>
+    );
+
+    this.fields.push(imageField);
     return this; // for method chaining
   }
 
