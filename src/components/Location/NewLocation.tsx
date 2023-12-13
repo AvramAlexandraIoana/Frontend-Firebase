@@ -19,6 +19,7 @@ const NewLocation: React.FC = () => {
   const [city, setCity] = useState("");
   const [countryId, setCountryId] = useState("");
   const [locationPhoto, setLocationPhoto] = useState<File | null>(null);
+  const [photoName, setPhotoName] = useState<string>("");
   const [countries, setCountries] = useState<Country[]>([]);
   const [loadingCountries, setLoadingCountries] = useState(true);
   const [loadingLocation, setLoadingLocation] = useState(true);
@@ -42,6 +43,7 @@ const NewLocation: React.FC = () => {
             setStreetAddress(locationData.streetAddress || "");
             setCity(locationData.city || "");
             setCountryId(locationData.country.id || "");
+            setPhotoName(locationData.photoName || ""); // Add this line
           }
         }
       } catch (error) {
@@ -103,7 +105,8 @@ const NewLocation: React.FC = () => {
         streetAddress,
         city,
         country: selectedCountry,
-        photoURL
+        photoURL,
+        photoName, // Add this line
       } as Location;
       console.log(locationData);
 
@@ -124,9 +127,9 @@ const NewLocation: React.FC = () => {
     console.log("file", file);
     if (file) {
       setLocationPhoto(file);
+      setPhotoName(file.name); // Add this line
     }
   };
-
 
   const formBuilder = new CreateFormBuilder({
     buttonLabel: isUpdate ? "Update Location" : "Create Location",

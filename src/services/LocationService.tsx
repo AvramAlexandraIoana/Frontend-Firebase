@@ -43,6 +43,7 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
               id: childSnapshot.key as string,
               streetAddress: childSnapshot.val().streetAddress as string,
               city: childSnapshot.val().city as string,
+              photoName: childSnapshot.val().photoName as string,
               photoURL: childSnapshot.val().photoURL as string,
               country: {
                 id: childSnapshot.val().country.id as string,
@@ -93,7 +94,8 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
             id: snapshot.key as string,
             streetAddress: snapshot.val().streetAddress as string,
             city: snapshot.val().city as string,
-            photoURL: "",
+            photoName: snapshot.val().photoName as string,
+            photoURL: snapshot.val().photoURL as string,
             country: {
               id: snapshot.val().country.id as string,
               name: snapshot.val().country.name as string,
@@ -129,7 +131,8 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
                 id: childSnapshot.key as string,
                 streetAddress: childSnapshot.val().streetAddress as string,
                 city: childSnapshot.val().city as string,
-                photoURL: "",
+                photoName: childSnapshot.val().photoName as string,
+                photoURL: childSnapshot.val().photoURL as string,
                 country: {
                   id: childSnapshot.val().country.id as string,
                   name: childSnapshot.val().country.name as string,
@@ -147,6 +150,13 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
           console.error("Error fetching locations by country ID:", error);
           throw error;
         }
+      }
+
+      async createFileFromUrl(url: string, filename: string): Promise<File> {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const file = new File([blob], filename, { type: blob.type });
+        return file;
       }
 
   }

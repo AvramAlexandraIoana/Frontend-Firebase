@@ -26,15 +26,6 @@ const locationService = new LocationService();
 const LocationList: React.FC = () => {
   const [locations, setLocations] = useState<Location[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isAddLocationDialogOpen, setAddLocationDialogOpen] =
-    useState<boolean>(false);
-  const [newLocation, setNewLocation] = useState<Location>({
-    id: "",
-    streetAddress: "",
-    city: "",
-    country: { id: "", name: "" },
-    photoURL: ""
-  });
   const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] =
     useState<boolean>(false);
   const [selectedLocationId, setSelectedLocationId] = useState<string>("");
@@ -73,21 +64,6 @@ const LocationList: React.FC = () => {
 
   const handleEditLocation = (locationId: string) => {
     navigate(`/location/${locationId}`);
-  };
-
-  const handleCloseAddLocationDialog = () => {
-    setAddLocationDialogOpen(false);
-  };
-
-  const handleSaveNewLocation = async () => {
-    try {
-      await locationService.addLocation(newLocation);
-      await fetchLocations();
-    } catch (error) {
-      console.error("Error adding new location:", error);
-    } finally {
-      setAddLocationDialogOpen(false);
-    }
   };
 
   return (
@@ -190,28 +166,7 @@ const LocationList: React.FC = () => {
           </DialogActions>
         </Dialog>
 
-        {/* Add Location Dialog */}
-        <Dialog
-          open={isAddLocationDialogOpen}
-          onClose={handleCloseAddLocationDialog}
-          maxWidth="xs"
-        >
-          <DialogTitle>Add New Location</DialogTitle>
-          <DialogContent>
-            {/* Include form fields for new location data */}
-            {/* For example, input fields for streetAddress, city, and country */}
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseAddLocationDialog}>Cancel</Button>
-            <Button
-              onClick={handleSaveNewLocation}
-              variant="contained"
-              color="primary"
-            >
-              Save
-            </Button>
-          </DialogActions>
-        </Dialog>
+    
       </Paper>
     </>
   );
