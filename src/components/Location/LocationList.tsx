@@ -40,6 +40,7 @@ const LocationList: React.FC = () => {
     null
   );
   const [locationPhoto, setLocationPhoto] = useState<File | null>(null);
+  const [loadingPhoto, setLoadingPhoto] = useState<boolean>(false);
   const navigate = useNavigate();
   const storage = getStorage();
 
@@ -72,23 +73,24 @@ const LocationList: React.FC = () => {
 
   const handleViewLocation = async (location: Location) => {
     try {
+      setLoadingPhoto(true);
+      setViewDialogOpen(true);
       setSelectedLocation(location);
 
       // Use Firebase Storage SDK to get blob
       const storageRef = ref(storage, `location-photos/${location.id}`);
       const blob = await getBlob(storageRef);
 
-      console.log(blob);
       // Set locationPhoto with Blob details
       setLocationPhoto(
         new File([blob], location.photoName || "photo", {
           type: blob.type,
         })
       );
-
-      setViewDialogOpen(true);
     } catch (error) {
       console.error("Error fetching location photo blob:", error);
+    } finally {
+      setLoadingPhoto(false);
     }
   };
 
@@ -229,6 +231,7 @@ const LocationList: React.FC = () => {
         </Dialog>
 
         {/* View Dialog */}
+        {/* View Dialog */}
         <Dialog
           open={isViewDialogOpen}
           onClose={handleViewDialogClose}
@@ -253,17 +256,21 @@ const LocationList: React.FC = () => {
                 <p>
                   <strong>Country:</strong> {selectedLocation.country.name}
                 </p>
-                {locationPhoto && (
-                  <img
-                    src={URL.createObjectURL(locationPhoto)}
-                    alt="Location Photo"
-                    style={{
-                      width: "100%",
-                      height: "auto",
-                      maxHeight: "300px",
-                      marginTop: "5px",
-                    }}
-                  />
+                {loadingPhoto ? (
+                  <CircularProgress size={25} /> // Centered loading indicator
+                ) : (
+                  locationPhoto && (
+                    <img
+                      src={URL.createObjectURL(locationPhoto)}
+                      alt="Location Photo"
+                      style={{
+                        width: "100%",
+                        height: "auto",
+                        maxHeight: "300px",
+                        marginTop: "5px",
+                      }}
+                    />
+                  )
                 )}
               </>
             )}
