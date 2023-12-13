@@ -43,7 +43,7 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
               id: childSnapshot.key as string,
               streetAddress: childSnapshot.val().streetAddress as string,
               city: childSnapshot.val().city as string,
-              photoURL: childSnapshot.val().photoUrl as string,
+              photoURL: childSnapshot.val().photoURL as string,
               country: {
                 id: childSnapshot.val().country.id as string,
                 name: childSnapshot.val().country.name as string,
