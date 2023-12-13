@@ -11,6 +11,7 @@ import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { createButton } from "../ComponentFactory/ComponentFactory";
+import { MenuItem } from "@mui/material";
 
 interface FieldConfig {
   label: string;
@@ -93,10 +94,9 @@ class CreateFormBuilder {
     this.fields.push(textField);
     return this; // for method chaining
   }
-
   addSelectField(config: SelectFieldConfig): CreateFormBuilder {
     const { label, name, value, onChange, options, validators = [], errorMessages = [] } = config;
-
+  
     const selectField = (
       <SelectValidator
         key={name}
@@ -112,13 +112,13 @@ class CreateFormBuilder {
         autoComplete="off"
       >
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
+          <MenuItem key={option.value} value={option.value}>
             {option.label}
-          </option>
+          </MenuItem>
         ))}
       </SelectValidator>
     );
-
+  
     this.fields.push(selectField);
     return this; // for method chaining
   }
