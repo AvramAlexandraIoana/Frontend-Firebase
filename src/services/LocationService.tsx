@@ -7,6 +7,10 @@ import {
     get,
     remove,
     push,
+    equalTo,
+    child,
+    query,
+    orderByChild,
   } from "firebase/database";
 import { firebase } from "../configuration/firebase";
 import { Location } from "../interfaces/Location/Location";
@@ -120,5 +124,43 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
         throw error;
       }
     }
+    
+    async getLocationsByCountryId(countryId: string): Promise<Location[]> {
+        try {
+            const locationsRef = ref(database, "locations");
+            const locationsQuery = query(
+              locationsRef,
+              orderByChild("country/id"),
+              equalTo(countryId)
+            );
+    
+          const snapshot = await get(locationsQuery);
+    
+          const locations: Location[] = [];
+          if (snapshot.exists()) {
+            snapshot.forEach((childSnapshot) => {
+              const location: Location = {
+                id: childSnapshot.key as string,
+                streetAddress: childSnapshot.val().streetAddress as string,
+                city: childSnapshot.val().city as string,
+                country: {
+                  id: childSnapshot.val().country.id as string,
+                  name: childSnapshot.val().country.name as string,
+                },
+                // Add other properties based on your data structure
+                // otherProperty: childSnapshot.val().otherProperty as string,
+              };
+              locations.push(location);
+            });
+          }
+    
+          console.log("locations", locations);
+          return locations;
+        } catch (error) {
+          console.error("Error fetching locations by country ID:", error);
+          throw error;
+        }
+      }
+
   }
   

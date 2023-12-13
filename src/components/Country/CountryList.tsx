@@ -1,5 +1,3 @@
-// CountryList.tsx
-
 import React, { useEffect, useState } from "react";
 import { Country } from "../../interfaces/Country/Country";
 import { CountryService } from "../../services/CountryService";
@@ -20,19 +18,17 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import CustomAppBar from "../AppBar/CustomAppBar";
-
-const countryService = new CountryService();
+import { Location } from "../../interfaces/Location/Location";
+import { LocationService } from "../../services/LocationService";
 
 const CountryList: React.FC = () => {
   const [countries, setCountries] = useState<Country[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isAddCountryDialogOpen, setAddCountryDialogOpen] =
-    useState<boolean>(false);
-  const [newCountryName, setNewCountryName] = useState<string>("");
   const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] =
     useState<boolean>(false);
   const [selectedCountryId, setSelectedCountryId] = useState<string>("");
-  const [selectedCountryName, setSelectedCountryName] = useState<string>("");
+  const countryService = new CountryService();
+  const locationService = new LocationService();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,10 +49,14 @@ const CountryList: React.FC = () => {
 
   const handleDeleteCountry = async () => {
     try {
+      const locations = await locationService.getLocationsByCountryId(selectedCountryId);
+      await Promise.all(locations.map((location: Location) => locationService.deleteLocation(location.id)));
+
       await countryService.deleteCountry(selectedCountryId);
+
       await fetchCountries();
     } catch (error) {
-      console.error("Error deleting country:", error);
+      console.error("Error deleting country and related locations:", error);
     } finally {
       setDeleteConfirmationOpen(false);
     }
@@ -129,7 +129,6 @@ const CountryList: React.FC = () => {
                         color="error"
                         onClick={() => {
                           setSelectedCountryId(country.id);
-                          setSelectedCountryName(country.name);
                           setDeleteConfirmationOpen(true);
                         }}
                       >
