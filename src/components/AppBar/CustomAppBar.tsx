@@ -37,6 +37,11 @@ const CustomAppBar: React.FC = () => {
         <Typography variant="h6">Travel App</Typography>
 
         <div style={{ marginLeft: "auto" }}>
+        {(userRoles.includes("admin") || userRoles.includes("agentie") || userRoles.includes("client")) && (
+            <Button component={Link} to="/trip-list" color="inherit">
+              Trip List
+            </Button>
+          )}
           {(userRoles.includes("admin") || userRoles.includes("agentie")) && (
             <Button component={Link} to="/agency-list" color="inherit">
               Agency List
