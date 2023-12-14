@@ -70,7 +70,7 @@ const TripList: React.FC = () => {
     navigate(`/trip/${tripId}`);
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date | null) => {
     return date ? format(date, 'dd/MM/yyyy') : '';
   };
 
@@ -138,10 +138,10 @@ const TripList: React.FC = () => {
                     <TableCell>{trip.numberOfSeats}</TableCell>
                     <TableCell>{trip.duration}</TableCell>
                     <TableCell>
-                     {trip.startDate ? formatDate(trip.startDate) : ''}
+                     {trip.startDate ? formatDate(new Date(trip.startDate)) : ''}
                     </TableCell>
                     <TableCell>
-                      {trip.endDate ? formatDate(trip.endDate) : ''}
+                      {trip.endDate ? formatDate(new Date(trip.endDate)) : ''}
                     </TableCell>
                     <TableCell>{trip.location.city}</TableCell>
                     <TableCell>{trip.agency.name}</TableCell>
@@ -230,11 +230,11 @@ const TripList: React.FC = () => {
                   <strong>Duration:</strong> {selectedTrip.duration}
                 </p>
                 <p>
-                  <strong>Start Date:</strong> {selectedTrip.startDate ? formatDate(selectedTrip.startDate) : ''}
+                  <strong>Start Date:</strong> {selectedTrip.startDate ? formatDate(new Date(selectedTrip.startDate)) : ''}
 
                 </p>
                 <p>
-                  <strong>End Date:</strong> {selectedTrip.endDate ? formatDate(selectedTrip.endDate) : ''}
+                  <strong>End Date:</strong> {selectedTrip.endDate ? formatDate(new Date(selectedTrip.endDate)) : ''}
                 </p>
                 <p>
                   <strong>Location:</strong> {selectedTrip.location.city}
