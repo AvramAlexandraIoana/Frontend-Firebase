@@ -1,4 +1,3 @@
-// CreateFormBuilder.tsx
 import React from "react";
 import {
   TextValidator,
@@ -11,9 +10,21 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { createButton } from "../ComponentFactory/ComponentFactory";
 import { Input, InputLabel, MenuItem, TextField } from "@mui/material";
-import { FileUploadOutlined } from "@mui/icons-material";
-import DatePicker from "react-datepicker"; // Import react-datepicker
-import "react-datepicker/dist/react-datepicker.css"; // Import the styles for react-datepicker
+import { FileUploadOutlined, Event } from "@mui/icons-material";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+const DatePickerTextValidator = (params: any) => (
+  <TextValidator
+    {...params}
+    fullWidth
+    variant="outlined"
+    margin="normal"
+    validators={params.validators}
+    errorMessages={params.errorMessages}
+    autoComplete="off"
+  />
+);
 
 interface FieldConfig {
   label: string;
@@ -40,7 +51,7 @@ interface SelectFieldConfig {
 interface FileConfig {
   label: string;
   name: string;
-  value?: File | null; // Make value optional
+  value?: File | null;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -48,7 +59,7 @@ interface DatePickerFieldConfig {
   label: string;
   name: string;
   value: Date | null;
-  onChange: (date: Date | null) => void; // Change the type of onChange
+  onChange: (date: Date | null) => void;
   validators?: string[];
   errorMessages?: string[];
 }
@@ -185,16 +196,22 @@ class CreateFormBuilder {
     this.fields.push(fileInput);
     return this; // for method chaining
   }
-
   addDatePickerField(config: DatePickerFieldConfig): CreateFormBuilder {
     const { label, name, value, onChange, validators = [], errorMessages = [] } = config;
+
     const datePickerField = (
-      <DatePicker
-        key={name}
-        selected={value}
-        dateFormat="dd/MM/yyyy"
-        onChange={(date: Date) => onChange(date)}
-      />
+      <>
+       <span>{label}</span>
+        <div key={name}>
+          <DatePicker
+            selected={value}
+            dateFormat="dd/MM/yyyy"
+            onChange={(date: Date) => onChange(date)}
+            customInput={<DatePickerTextValidator />}
+          />
+        </div>
+      </>
+     
     );
 
     this.fields.push(datePickerField);
