@@ -49,8 +49,7 @@ Admin
 Email: avramioanaalexandra@gmail.com
 Parola: Acolosus2313-&
 
-
-Client
+Client, Agentie
 Email: avramioanaalexandra1@gmail.com
 Parola: Acolosus2313-&
 
