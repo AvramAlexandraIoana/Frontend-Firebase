@@ -1,5 +1,4 @@
-// FormBuilder.tsx
-
+// CreateFormBuilder.tsx
 import React from "react";
 import {
   TextValidator,
@@ -102,6 +101,14 @@ class CreateFormBuilder {
     this.fields.push(textField);
     return this; // for method chaining
   }
+  
+  addNumberField(config: FieldConfig): CreateFormBuilder {
+    return this.addTextField({
+      ...config,
+      type: "number",
+    });
+  }
+
   addSelectField(config: SelectFieldConfig): CreateFormBuilder {
     const { label, name, value, onChange, options, validators = [], errorMessages = [] } = config;
   
@@ -167,7 +174,7 @@ class CreateFormBuilder {
     this.fields.push(fileInput);
     return this; // for method chaining
   }
-  
+
   addImageField(label: string, name: string, value: string): CreateFormBuilder {
     const imageField = (
       <div key={name}>
