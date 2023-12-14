@@ -74,6 +74,11 @@ const TripList: React.FC = () => {
     return date ? format(date, 'dd/MM/yyyy') : '';
   };
 
+  const hasUserRole = (role: string) => {
+    const userRoles = localStorage.getItem("userRoles");
+    return userRoles && userRoles.includes(role);
+  };
+
   return (
     <>
       <CustomAppBar />
@@ -85,14 +90,16 @@ const TripList: React.FC = () => {
           alignItems: "flex-end",
         }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => navigate("/trip/0")}
-          style={{ margin: "15px" }}
-        >
-          Add New Trip
-        </Button>
+        {(hasUserRole("admin") || hasUserRole("agentie")) && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/trip/0")}
+            style={{ margin: "15px" }}
+          >
+            Add New Trip
+          </Button>
+        )}
 
         <TableContainer>
           <Table>
@@ -146,25 +153,31 @@ const TripList: React.FC = () => {
                     <TableCell>{trip.location.city}</TableCell>
                     <TableCell>{trip.agency.name}</TableCell>
                     <TableCell>
-                      <Button
-                        variant="outlined"
-                        style={{ marginRight: "8px" }}
-                        onClick={() => {
-                          handleEditTrip(trip.id);
-                        }}
-                      >
-                        Edit
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="error"
-                        onClick={() => {
-                          setSelectedTrip(trip);
-                          setDeleteConfirmationOpen(true);
-                        }}
-                      >
-                        Delete
-                      </Button>
+                      {(hasUserRole("admin") || hasUserRole("agentie")) && (
+                        <Button
+                          variant="outlined"
+                          style={{ marginRight: "8px" }}
+                          onClick={() => {
+                            handleEditTrip(trip.id);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                      )}
+
+                      {(hasUserRole("admin") || hasUserRole("agentie")) && (
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          onClick={() => {
+                            setSelectedTrip(trip);
+                            setDeleteConfirmationOpen(true);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      )}
+
                       <Button
                         variant="outlined"
                         style={{ marginLeft: "8px" }}
