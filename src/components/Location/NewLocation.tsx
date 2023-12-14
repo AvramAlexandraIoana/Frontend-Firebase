@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios"; // Import Axios
 import { LocationService } from "../../services/LocationService";
 import { CountryService } from "../../services/CountryService";
 import { Location } from "../../interfaces/Location/Location";
