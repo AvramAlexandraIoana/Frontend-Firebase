@@ -18,17 +18,21 @@ import {
 } from "@mui/material";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { useNavigate } from "react-router-dom";
-import DatePicker from '@mui/lab/DatePicker';
-import { format } from 'date-fns';
+import DatePicker from "@mui/lab/DatePicker";
+import { format } from "date-fns";
+import { Purchase } from "../../interfaces/Trip/Purchase";
+import { AuthService } from "../../services/AuthService";
 
 const TripList: React.FC = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] = useState<boolean>(false);
+  const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] =
+    useState<boolean>(false);
   const [isViewDialogOpen, setViewDialogOpen] = useState<boolean>(false);
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const navigate = useNavigate();
   const tripService = new TripService();
+  const authService = new AuthService();
 
   useEffect(() => {
     fetchTrips();
@@ -71,12 +75,35 @@ const TripList: React.FC = () => {
   };
 
   const formatDate = (date: Date | null) => {
-    return date ? format(date, 'dd/MM/yyyy') : '';
+    return date ? format(date, "dd/MM/yyyy") : "";
   };
 
   const hasUserRole = (role: string) => {
     const userRoles = localStorage.getItem("userRoles");
     return userRoles && userRoles.includes(role);
+  };
+
+  const handlePurchaseTrip = async (trip: Trip) => {
+    try {
+      const user = await authService.getCurrentUser();
+      if (!user) {
+        // Handle the case where the user is not logged in
+        console.error("User not logged in");
+        return;
+      }
+
+      const purchase: Purchase = {
+        user,
+        trip,
+        purchaseDate: new Date(),
+      };
+
+      await tripService.purchaseTrip(purchase);
+      // Optionally, you can fetch and update the trips after a purchase
+      await fetchTrips();
+    } catch (error) {
+      console.error("Error purchasing trip:", error);
+    }
   };
 
   return (
@@ -145,10 +172,12 @@ const TripList: React.FC = () => {
                     <TableCell>{trip.numberOfSeats}</TableCell>
                     <TableCell>{trip.duration}</TableCell>
                     <TableCell>
-                     {trip.startDate ? formatDate(new Date(trip.startDate)) : ''}
+                      {trip.startDate
+                        ? formatDate(new Date(trip.startDate))
+                        : ""}
                     </TableCell>
                     <TableCell>
-                      {trip.endDate ? formatDate(new Date(trip.endDate)) : ''}
+                      {trip.endDate ? formatDate(new Date(trip.endDate)) : ""}
                     </TableCell>
                     <TableCell>{trip.location.city}</TableCell>
                     <TableCell>{trip.agency.name}</TableCell>
@@ -184,6 +213,14 @@ const TripList: React.FC = () => {
                         onClick={() => handleViewTrip(trip)}
                       >
                         View
+                      </Button>
+                      <Button
+                        variant="outlined"
+                        color="primary"
+                        style={{ marginLeft: "8px" }}
+                        onClick={() => handlePurchaseTrip(trip)}
+                      >
+                        Purchase
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -243,11 +280,16 @@ const TripList: React.FC = () => {
                   <strong>Duration:</strong> {selectedTrip.duration}
                 </p>
                 <p>
-                  <strong>Start Date:</strong> {selectedTrip.startDate ? formatDate(new Date(selectedTrip.startDate)) : ''}
-
+                  <strong>Start Date:</strong>{" "}
+                  {selectedTrip.startDate
+                    ? formatDate(new Date(selectedTrip.startDate))
+                    : ""}
                 </p>
                 <p>
-                  <strong>End Date:</strong> {selectedTrip.endDate ? formatDate(new Date(selectedTrip.endDate)) : ''}
+                  <strong>End Date:</strong>{" "}
+                  {selectedTrip.endDate
+                    ? formatDate(new Date(selectedTrip.endDate))
+                    : ""}
                 </p>
                 <p>
                   <strong>Location:</strong> {selectedTrip.location.city}

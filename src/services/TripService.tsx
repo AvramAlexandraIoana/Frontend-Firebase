@@ -13,10 +13,12 @@ import {
 } from "firebase/database";
 import { firebase } from "../configuration/firebase";
 import { Country } from "../interfaces/Country/Country";
+import { Purchase } from "../interfaces/Trip/Purchase";
+import { TripServiceInterface } from "../interfaces/Trip/TripServiceInterface";
 
 const database = getDatabase(firebase);
 
-export class TripService {
+export class TripService implements TripServiceInterface {
   async addTrip(trip: Trip): Promise<void> {
     try {
       const tripRef = ref(database, "trips");
@@ -48,7 +50,8 @@ export class TripService {
             location: {
               id: childSnapshot.val().location.id as string,
               city: childSnapshot.val().location.city as string,
-              streetAddress: childSnapshot.val().location.streetAddress as string,
+              streetAddress: childSnapshot.val().location
+                .streetAddress as string,
               country: childSnapshot.val().location.country as Country,
               photoName: childSnapshot.val().location.photoName as string,
               photoURL: childSnapshot.val().location.photoURL as string,
@@ -59,10 +62,13 @@ export class TripService {
               location: {
                 id: childSnapshot.val().agency.location.id as string,
                 city: childSnapshot.val().agency.location.city as string,
-                streetAddress: childSnapshot.val().agency.location.streetAddress as string,
+                streetAddress: childSnapshot.val().agency.location
+                  .streetAddress as string,
                 country: childSnapshot.val().agency.location.country as Country,
-                photoName: childSnapshot.val().agency.location.photoName as string,
-                photoURL: childSnapshot.val().agency.location.photoURL as string,
+                photoName: childSnapshot.val().agency.location
+                  .photoName as string,
+                photoURL: childSnapshot.val().agency.location
+                  .photoURL as string,
               },
             },
           };
@@ -126,7 +132,8 @@ export class TripService {
             location: {
               id: snapshot.val().agency.location.id as string,
               city: snapshot.val().agency.location.city as string,
-              streetAddress: snapshot.val().agency.location.streetAddress as string,
+              streetAddress: snapshot.val().agency.location
+                .streetAddress as string,
               country: snapshot.val().agency.location.country as Country,
               photoName: snapshot.val().agency.location.photoName as string,
               photoURL: snapshot.val().agency.location.photoURL as string,
@@ -139,6 +146,22 @@ export class TripService {
       }
     } catch (error) {
       console.error("Error getting trip by ID:", error);
+      throw error;
+    }
+  }
+
+  async purchaseTrip(purchase: Purchase): Promise<void> {
+    try {
+      const purchasesRef = ref(database, "purchases");
+      const newPurchaseRef = push(purchasesRef);
+
+      await set(newPurchaseRef, {
+        user: purchase.user,
+        trip: purchase.trip,
+        purchaseDate: new Date(),
+      });
+    } catch (error) {
+      console.error("Error purchasing trip:", error);
       throw error;
     }
   }

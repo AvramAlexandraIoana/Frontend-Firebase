@@ -1,6 +1,8 @@
 import {
   Auth,
   createUserWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
   UserCredential,
