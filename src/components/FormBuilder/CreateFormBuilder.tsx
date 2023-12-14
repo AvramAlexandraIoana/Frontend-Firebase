@@ -208,6 +208,7 @@ class CreateFormBuilder {
             dateFormat="dd/MM/yyyy"
             onChange={(date: Date) => onChange(date)}
             customInput={<DatePickerTextValidator />}
+            required={true}
           />
         </div>
       </>
