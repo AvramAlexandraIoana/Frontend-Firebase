@@ -28,6 +28,7 @@ const NewLocation: React.FC = () => {
   const [loadingCountries, setLoadingCountries] = useState(true);
   const [loadingLocation, setLoadingLocation] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false); // Added saving state
   const navigate = useNavigate();
   const { id } = useParams();
   const isUpdate = id !== "0";
@@ -50,7 +51,6 @@ const NewLocation: React.FC = () => {
             setCountryId(locationData.country.id || "");
             setPhotoName(locationData.photoName || "");
 
-            // Use Firebase Storage SDK to get download URL
             const storageRef = ref(
               storage,
               `location-photos/${locationData.id}`
@@ -58,7 +58,6 @@ const NewLocation: React.FC = () => {
 
             const blob = await getBlob(storageRef);
             console.log(blob);
-            // Set locationPhoto with Blob details
             setLocationPhoto(
               new File([blob], locationData.photoName || "photo", {
                 type: blob.type,
@@ -104,7 +103,8 @@ const NewLocation: React.FC = () => {
   const handleCreateLocation = async () => {
     console.log(`${isUpdate ? "Updating" : "Creating"} location...`);
     try {
-      console.log(countryId);
+      setSaving(true);
+
       const locationId = isUpdate ? id : generateRandomId();
       const selectedCountry = countries.find((c) => c.id === countryId);
 
@@ -127,7 +127,7 @@ const NewLocation: React.FC = () => {
         city,
         country: selectedCountry,
         photoURL,
-        photoName, // Add this line
+        photoName,
       } as Location;
       console.log(locationData);
 
@@ -143,6 +143,8 @@ const NewLocation: React.FC = () => {
         `${isUpdate ? "Error updating" : "Error creating"} location:`,
         error
       );
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -151,7 +153,7 @@ const NewLocation: React.FC = () => {
     console.log("file", file);
     if (file) {
       setLocationPhoto(file);
-      setPhotoName(file.name); // Add this line
+      setPhotoName(file.name);
     }
   };
 
@@ -218,7 +220,7 @@ const NewLocation: React.FC = () => {
           variant: "h5",
           children: isUpdate ? "Update Location" : "Create Location",
         })}
-        {loading && (
+        {(loading || saving) && (
           <div
             style={{
               display: "flex",
