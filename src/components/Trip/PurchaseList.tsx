@@ -1,5 +1,3 @@
-// PurchaseList.jsx
-
 import React, { useEffect, useState } from "react";
 import {
   Button,
@@ -22,6 +20,8 @@ import { TripService } from "../../services/TripService";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { AuthService } from "../../services/AuthService";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../configuration/firebase";
 
 const PurchaseList: React.FC = () => {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
@@ -35,8 +35,27 @@ const PurchaseList: React.FC = () => {
   const authService = new AuthService();
 
   useEffect(() => {
-    fetchPurchases();
-  }, []);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, you can access user data
+        const uid = user.uid;
+        const email = user.email;
+        // Add other user properties as needed
+        console.log("Authenticated user:", user);
+        fetchPurchases();
+      } else {
+        // User is signed out
+        console.log("No user signed in.");
+        setPurchases([]); // Clear purchases when user signs out
+        setIsLoading(false);
+      }
+    });
+
+    return () => {
+      // Unsubscribe the listener when the component unmounts
+      unsubscribe();
+    };
+  }, []); // Empty dependency array ensures the effect runs only once on mount
 
   const fetchPurchases = async () => {
     try {
@@ -56,6 +75,7 @@ const PurchaseList: React.FC = () => {
       setIsLoading(false);
     }
   };
+
   const handleViewPurchase = (purchase: Purchase) => {
     setSelectedPurchase(purchase);
     setViewDialogOpen(true);
@@ -113,9 +133,7 @@ const PurchaseList: React.FC = () => {
               ) : (
                 purchases.map((purchase) => (
                   <TableRow key={purchase.id}>
-                    <TableCell>
-                      {formatDate(new Date(purchase.purchaseDate))}
-                    </TableCell>
+                    <TableCell>{formatDate(new Date(purchase.date))}</TableCell>
                     <TableCell>{purchase.user.localId}</TableCell>
                     <TableCell>{purchase.trip.id}</TableCell>
                     {/* Add more fields as needed */}
@@ -149,7 +167,7 @@ const PurchaseList: React.FC = () => {
               <>
                 <p>
                   <strong>Purchase Date:</strong>{" "}
-                  {formatDate(new Date(selectedPurchase.purchaseDate))}
+                  {formatDate(new Date(selectedPurchase.date))}
                 </p>
                 <p>
                   <strong>User ID:</strong> {selectedPurchase.user.localId}

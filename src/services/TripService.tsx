@@ -169,7 +169,7 @@ export class TripService implements TripServiceInterface {
       const purchasesRef = ref(database, "purchases");
       const userPurchasesQuery = query(
         purchasesRef,
-        orderByChild("user/id"),
+        orderByChild("user/localId"),
         equalTo(userId)
       );
 
@@ -180,9 +180,9 @@ export class TripService implements TripServiceInterface {
         snapshot.forEach((childSnapshot) => {
           const purchase: Purchase = {
             id: childSnapshot.key as string,
+            date: childSnapshot.val().date as Date,
             user: childSnapshot.val().user as User, // Adjust this based on your structure
-            trip: childSnapshot.val().trip as Trip, // Adjust this based on your structure
-            purchaseDate: childSnapshot.val().purchaseDate as Date,
+            trip: childSnapshot.val().trip as Trip,
           };
           purchases.push(purchase);
         });
