@@ -18,17 +18,17 @@ import {
 } from "@mui/material";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { useNavigate } from "react-router-dom";
-
-const tripService = new TripService();
+import DatePicker from '@mui/lab/DatePicker';
+import { format } from 'date-fns';
 
 const TripList: React.FC = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] =
-    useState<boolean>(false);
+  const [isDeleteConfirmationOpen, setDeleteConfirmationOpen] = useState<boolean>(false);
   const [isViewDialogOpen, setViewDialogOpen] = useState<boolean>(false);
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const navigate = useNavigate();
+  const tripService = new TripService();
 
   useEffect(() => {
     fetchTrips();
@@ -68,6 +68,10 @@ const TripList: React.FC = () => {
 
   const handleEditTrip = (tripId: string) => {
     navigate(`/trip/${tripId}`);
+  };
+
+  const formatDate = (date: Date) => {
+    return date ? format(date, 'dd-MM-yyyy') : '';
   };
 
   return (
@@ -133,8 +137,12 @@ const TripList: React.FC = () => {
                     <TableCell>{trip.price}</TableCell>
                     <TableCell>{trip.numberOfSeats}</TableCell>
                     <TableCell>{trip.duration}</TableCell>
-                    <TableCell>{trip.startDate}</TableCell>
-                    <TableCell>{trip.endDate}</TableCell>
+                    <TableCell>
+                     {trip.startDate ? formatDate(trip.startDate) : ''}
+                    </TableCell>
+                    <TableCell>
+                      {trip.endDate ? formatDate(trip.endDate) : ''}
+                    </TableCell>
                     <TableCell>{trip.location.city}</TableCell>
                     <TableCell>{trip.agency.name}</TableCell>
                     <TableCell>
@@ -222,10 +230,11 @@ const TripList: React.FC = () => {
                   <strong>Duration:</strong> {selectedTrip.duration}
                 </p>
                 <p>
-                  <strong>Start Date:</strong> {selectedTrip.startDate}
+                  <strong>Start Date:</strong> {selectedTrip.startDate ? formatDate(selectedTrip.startDate) : ''}
+
                 </p>
                 <p>
-                  <strong>End Date:</strong> {selectedTrip.endDate}
+                  <strong>End Date:</strong> {selectedTrip.endDate ? formatDate(selectedTrip.endDate) : ''}
                 </p>
                 <p>
                   <strong>Location:</strong> {selectedTrip.location.city}

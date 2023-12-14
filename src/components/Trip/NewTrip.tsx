@@ -1,5 +1,3 @@
-// NewTrip.tsx
-
 import React, { useEffect, useState } from "react";
 import { TripService } from "../../services/TripService";
 import { LocationService } from "../../services/LocationService";
@@ -12,6 +10,7 @@ import CreateFormBuilder from "../FormBuilder/CreateFormBuilder";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { Paper, CircularProgress } from "@mui/material";
 import { createTypography } from "../ComponentFactory/ComponentFactory";
+import DatePicker from '@mui/lab/DatePicker';
 
 const NewTrip: React.FC = () => {
   const tripService = new TripService();
@@ -22,8 +21,8 @@ const NewTrip: React.FC = () => {
   const [price, setPrice] = useState<number | null>();
   const [numberOfSeats, setNumberOfSeats] = useState<number | null>();
   const [duration, setDuration] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startDate, setStartDate] = useState<Date | null>(null); // Updated to use Date
+  const [endDate, setEndDate] = useState<Date | null>(null); // Updated to use Date
   const [locationId, setLocationId] = useState("");
   const [agencyId, setAgencyId] = useState("");
   const [locations, setLocations] = useState<Location[]>([]);
@@ -58,8 +57,8 @@ const NewTrip: React.FC = () => {
             setPrice(tripData.price);
             setNumberOfSeats(tripData.numberOfSeats);
             setDuration(tripData.duration || "");
-            setStartDate(tripData.startDate || "");
-            setEndDate(tripData.endDate || "");
+            setStartDate(tripData.startDate ? new Date(tripData.startDate) : null); // Updated to use Date
+            setEndDate(tripData.endDate ? new Date(tripData.endDate) : null); // Updated to use Date
             setLocationId(tripData.location.id || "");
             setAgencyId(tripData.agency.id || "");
           }
@@ -120,8 +119,8 @@ const NewTrip: React.FC = () => {
         price: price,
         numberOfSeats: numberOfSeats,
         duration: duration,
-        startDate: startDate,
-        endDate: endDate,
+        startDate: startDate ? startDate.toISOString() : null, // Updated to use Date
+        endDate: endDate ? endDate.toISOString() : null, // Updated to use Date
         location: selectedLocation,
         agency: selectedAgency,
       } as Trip;
@@ -186,21 +185,19 @@ const NewTrip: React.FC = () => {
       validators: ["required"],
       errorMessages: ["This field is required"],
     })
-    .addTextField({
+    .addDatePickerField({  // Updated to use DatePicker
       label: "Start Date",
       name: "startDate",
       value: startDate,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-        setStartDate(e.target.value),
+      onChange: (date: Date | null) => setStartDate(date),
       validators: ["required"],
       errorMessages: ["This field is required"],
     })
-    .addTextField({
+    .addDatePickerField({  // Updated to use DatePicker
       label: "End Date",
       name: "endDate",
       value: endDate,
-      onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-        setEndDate(e.target.value),
+      onChange: (date: Date | null) => setEndDate(date),
       validators: ["required"],
       errorMessages: ["This field is required"],
     })

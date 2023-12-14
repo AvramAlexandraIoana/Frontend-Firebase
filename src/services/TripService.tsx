@@ -43,8 +43,8 @@ export class TripService {
             price: childSnapshot.val().price as number,
             numberOfSeats: childSnapshot.val().numberOfSeats as number,
             duration: childSnapshot.val().duration as string,
-            startDate: childSnapshot.val().startDate as string,
-            endDate: childSnapshot.val().endDate as string,
+            startDate: childSnapshot.val().startDate as Date,
+            endDate: childSnapshot.val().endDate as Date,
             location: {
               id: childSnapshot.val().location.id as string,
               city: childSnapshot.val().location.city as string,
@@ -110,8 +110,8 @@ export class TripService {
           price: snapshot.val().price as number,
           numberOfSeats: snapshot.val().numberOfSeats as number,
           duration: snapshot.val().duration as string,
-          startDate: snapshot.val().startDate as string,
-          endDate: snapshot.val().endDate as string,
+          startDate: snapshot.val().startDate as Date,
+          endDate: snapshot.val().endDate as Date,
           location: {
             id: snapshot.val().location.id as string,
             city: snapshot.val().location.city as string,

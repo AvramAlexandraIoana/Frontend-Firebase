@@ -7,8 +7,8 @@ export interface Trip {
   price: number;
   numberOfSeats: number;
   duration: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date | null;
+  endDate: Date  | null;
   location: Location;
   agency: Agency;
 }

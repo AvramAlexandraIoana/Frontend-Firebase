@@ -3,7 +3,7 @@ import React from "react";
 import {
   TextValidator,
   ValidatorForm,
-  SelectValidator,
+  SelectValidator
 } from "react-material-ui-form-validator";
 import InputAdornment from "@mui/material/InputAdornment";
 import IconButton from "@mui/material/IconButton";
@@ -12,6 +12,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { createButton } from "../ComponentFactory/ComponentFactory";
 import { Input, InputLabel, MenuItem, TextField } from "@mui/material";
 import { FileUploadOutlined } from "@mui/icons-material";
+import { DatePicker } from "@mui/lab";
 
 interface FieldConfig {
   label: string;
@@ -40,6 +41,15 @@ interface FileConfig {
   name: string;
   value?: File | null; // Make value optional
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
+
+interface DatePickerFieldConfig {
+  label: string;
+  name: string;
+  value: Date | null;
+  onChange: (date: Date | null) => void; // Change the type of onChange
+  validators?: string[];
+  errorMessages?: string[];
 }
 
 interface CreateFormBuilderConfig {
@@ -172,6 +182,32 @@ class CreateFormBuilder {
     );
   
     this.fields.push(fileInput);
+    return this; // for method chaining
+  }
+  addDatePickerField(config: DatePickerFieldConfig): CreateFormBuilder {
+    const { label, name, value, onChange, validators = [], errorMessages = [] } = config;
+    const datePickerField = (
+      <DatePicker
+        key={name}
+        label={label}
+        value={value}
+        onChange={(date: Date | null) => onChange(date)}
+        renderInput={(params: any) => (
+          <TextValidator
+            {...params}
+            fullWidth
+            variant="outlined"
+            margin="normal"
+            name={name}
+            validators={validators}
+            errorMessages={errorMessages}
+            autoComplete="off"
+          />
+        )}
+      />
+    );
+
+    this.fields.push(datePickerField);
     return this; // for method chaining
   }
 
