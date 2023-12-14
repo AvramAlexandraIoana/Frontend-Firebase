@@ -11,6 +11,7 @@ import CustomAppBar from "../AppBar/CustomAppBar";
 import { Paper, CircularProgress } from "@mui/material";
 import { createTypography } from "../ComponentFactory/ComponentFactory";
 import DatePicker from '@mui/lab/DatePicker';
+import { ToastContainer, toast } from "react-toastify";
 
 const NewTrip: React.FC = () => {
   const tripService = new TripService();
@@ -110,6 +111,12 @@ const NewTrip: React.FC = () => {
 
       if (!selectedLocation || !selectedAgency) {
         console.error("Selected location or agency not found.");
+        return;
+      }
+
+      if (startDate && endDate && startDate > endDate) {
+        console.error("Start date must be before end date.");
+        toast.error("Start date must be before end date.");
         return;
       }
 
@@ -231,6 +238,7 @@ const NewTrip: React.FC = () => {
 
   return (
     <>
+      <ToastContainer />
       <CustomAppBar />
       <Paper
         style={{
