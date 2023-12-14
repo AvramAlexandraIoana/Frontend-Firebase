@@ -37,14 +37,9 @@ const PurchaseList: React.FC = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        // User is signed in, you can access user data
-        const uid = user.uid;
-        const email = user.email;
-        // Add other user properties as needed
         console.log("Authenticated user:", user);
         fetchPurchases();
       } else {
-        // User is signed out
         console.log("No user signed in.");
         setPurchases([]); // Clear purchases when user signs out
         setIsLoading(false);
@@ -52,10 +47,9 @@ const PurchaseList: React.FC = () => {
     });
 
     return () => {
-      // Unsubscribe the listener when the component unmounts
       unsubscribe();
     };
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+  }, []);
 
   const fetchPurchases = async () => {
     try {
@@ -66,7 +60,6 @@ const PurchaseList: React.FC = () => {
           await tripService.getAllPurchasesForUser(user.localId);
         setPurchases(purchasesData);
       } else {
-        // Handle the case where the user is not logged in
         console.error("User not logged in");
       }
     } catch (error) {
@@ -108,7 +101,10 @@ const PurchaseList: React.FC = () => {
                   "Purchase Date",
                   "User ID",
                   "Trip ID",
-                  // Add more fields as needed
+                  "Trip Name",
+                  "Start Date",
+                  "End Date",
+                  "Price",
                   "Actions",
                 ].map((header, index) => (
                   <TableCell
@@ -136,7 +132,18 @@ const PurchaseList: React.FC = () => {
                     <TableCell>{formatDate(new Date(purchase.date))}</TableCell>
                     <TableCell>{purchase.user.localId}</TableCell>
                     <TableCell>{purchase.trip.id}</TableCell>
-                    {/* Add more fields as needed */}
+                    <TableCell>{purchase.trip.name}</TableCell>
+                    <TableCell>
+                      {purchase.trip.startDate
+                        ? formatDate(new Date(purchase.trip.startDate))
+                        : ""}
+                    </TableCell>
+                    <TableCell>
+                      {purchase.trip.endDate
+                        ? formatDate(new Date(purchase.trip.endDate))
+                        : ""}
+                    </TableCell>
+                    <TableCell>{purchase.trip.price}</TableCell>
                     <TableCell>
                       <Button
                         variant="outlined"
@@ -174,6 +181,24 @@ const PurchaseList: React.FC = () => {
                 </p>
                 <p>
                   <strong>Trip ID:</strong> {selectedPurchase.trip.id}
+                </p>
+                <p>
+                  <strong>Trip Name:</strong> {selectedPurchase.trip.name}
+                </p>
+                <p>
+                  <strong>Start Date:</strong>{" "}
+                  {selectedPurchase.trip.startDate
+                    ? formatDate(new Date(selectedPurchase.trip.startDate))
+                    : ""}
+                </p>
+                <p>
+                  <strong>End Date:</strong>{" "}
+                  {selectedPurchase.trip.endDate
+                    ? formatDate(new Date(selectedPurchase.trip.endDate))
+                    : ""}
+                </p>
+                <p>
+                  <strong>Price:</strong> {selectedPurchase.trip.price}
                 </p>
                 {/* Add more fields as needed */}
               </>

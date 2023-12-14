@@ -180,6 +180,7 @@ export class TripService implements TripServiceInterface {
         snapshot.forEach((childSnapshot) => {
           const purchase: Purchase = {
             id: childSnapshot.key as string,
+            test: childSnapshot.val().test as string,
             date: childSnapshot.val().date as Date,
             user: childSnapshot.val().user as User, // Adjust this based on your structure
             trip: childSnapshot.val().trip as Trip,

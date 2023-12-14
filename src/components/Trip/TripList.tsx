@@ -94,6 +94,7 @@ const TripList: React.FC = () => {
 
       const purchase: Purchase = {
         id: generateRandomId(),
+        test: "test",
         date: new Date(), // This line sets the purchaseDate to the current date and time
         user,
         trip,
