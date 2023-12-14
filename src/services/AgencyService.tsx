@@ -111,9 +111,11 @@ import { Country } from "../interfaces/Country/Country";
   
     async getAgenciesByLocationId(locationId: string): Promise<Agency[]> {
       try {
+        console.log("locationId", locationId);
+
         const agenciesRef = ref(database, "agencies");
         const agenciesQuery = query(
-          agenciesRef,
+            agenciesRef,
           orderByChild("location/id"),
           equalTo(locationId)
         );

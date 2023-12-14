@@ -38,6 +38,11 @@ const CustomAppBar: React.FC = () => {
 
         <div style={{ marginLeft: "auto" }}>
           {(userRoles.includes("admin") || userRoles.includes("agentie")) && (
+            <Button component={Link} to="/agency-list" color="inherit">
+              Agency List
+            </Button>
+          )}
+          {(userRoles.includes("admin") || userRoles.includes("agentie")) && (
             <Button component={Link} to="/location-list" color="inherit">
               Location List
             </Button>

@@ -1,5 +1,3 @@
-// LocationList.tsx
-
 import React, { useEffect, useState } from "react";
 import { Location } from "../../interfaces/Location/Location";
 import { LocationService } from "../../services/LocationService";
@@ -17,18 +15,16 @@ import {
   TableRow,
   Paper,
   CircularProgress,
-  Typography,
 } from "@mui/material";
 import CustomAppBar from "../AppBar/CustomAppBar";
 import { useNavigate } from "react-router-dom";
 import {
   getStorage,
   ref,
-  uploadBytes,
-  getDownloadURL,
   getBlob,
 } from "firebase/storage";
-const locationService = new LocationService();
+import { AgencyService } from "../../services/AgencyService";
+import { Agency } from "../../interfaces/Agency/Agency";
 
 const LocationList: React.FC = () => {
   const [locations, setLocations] = useState<Location[]>([]);
@@ -41,8 +37,11 @@ const LocationList: React.FC = () => {
   );
   const [locationPhoto, setLocationPhoto] = useState<File | null>(null);
   const [loadingPhoto, setLoadingPhoto] = useState<boolean>(false);
+  const [isDeleting, setIsDeleting] = useState<boolean>(false);
   const navigate = useNavigate();
   const storage = getStorage();
+  const locationService = new LocationService();
+  const agencyService = new AgencyService();
 
   useEffect(() => {
     fetchLocations();
@@ -62,11 +61,23 @@ const LocationList: React.FC = () => {
 
   const handleDeleteLocation = async () => {
     try {
+      setIsDeleting(true);
+
+      const agencies =
+        await agencyService.getAgenciesByLocationId(selectedLocation?.id || "");
+      await Promise.all(
+        agencies.map((agency: Agency) =>
+          agencyService.deleteAgency(agency.id)
+        )
+      );
+
       await locationService.deleteLocation(selectedLocation?.id || "");
+
       await fetchLocations();
     } catch (error) {
       console.error("Error deleting location:", error);
     } finally {
+      setIsDeleting(false);
       setDeleteConfirmationOpen(false);
     }
   };
@@ -77,7 +88,6 @@ const LocationList: React.FC = () => {
       setViewDialogOpen(true);
       setSelectedLocation(location);
 
-      // Use Firebase Storage SDK to get blob
       const storageRef = ref(
         storage,
         location.photoURL
@@ -85,7 +95,6 @@ const LocationList: React.FC = () => {
 
       const blob = await getBlob(storageRef);
 
-      // Set locationPhoto with Blob details
       setLocationPhoto(
         new File([blob], location.photoName || "photo", {
           type: blob.type,
@@ -106,7 +115,6 @@ const LocationList: React.FC = () => {
     navigate(`/location/${locationId}`);
   };
 
-  // Check if the user has a specific role
   const hasUserRole = (role: string) => {
     const userRoles = localStorage.getItem("userRoles");
     return userRoles && userRoles.includes(role);
@@ -228,13 +236,13 @@ const LocationList: React.FC = () => {
               onClick={handleDeleteLocation}
               variant="contained"
               color="primary"
+              disabled={isDeleting}
             >
-              Confirm Delete
+              {isDeleting ? <CircularProgress size={20} /> : "Confirm Delete"}
             </Button>
           </DialogActions>
         </Dialog>
 
-        {/* View Dialog */}
         {/* View Dialog */}
         <Dialog
           open={isViewDialogOpen}
@@ -261,7 +269,7 @@ const LocationList: React.FC = () => {
                   <strong>Country:</strong> {selectedLocation.country.name}
                 </p>
                 {loadingPhoto ? (
-                  <CircularProgress size={25} /> // Centered loading indicator
+                  <CircularProgress size={25} />
                 ) : (
                   locationPhoto && (
                     <img
