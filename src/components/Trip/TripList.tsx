@@ -71,7 +71,7 @@ const TripList: React.FC = () => {
   };
 
   const formatDate = (date: Date) => {
-    return date ? format(date, 'dd-MM-yyyy') : '';
+    return date ? format(date, 'dd/MM/yyyy') : '';
   };
 
   return (

@@ -12,7 +12,8 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { createButton } from "../ComponentFactory/ComponentFactory";
 import { Input, InputLabel, MenuItem, TextField } from "@mui/material";
 import { FileUploadOutlined } from "@mui/icons-material";
-import { DatePicker } from "@mui/lab";
+import DatePicker from "react-datepicker"; // Import react-datepicker
+import "react-datepicker/dist/react-datepicker.css"; // Import the styles for react-datepicker
 
 interface FieldConfig {
   label: string;
@@ -184,26 +185,15 @@ class CreateFormBuilder {
     this.fields.push(fileInput);
     return this; // for method chaining
   }
+
   addDatePickerField(config: DatePickerFieldConfig): CreateFormBuilder {
     const { label, name, value, onChange, validators = [], errorMessages = [] } = config;
     const datePickerField = (
       <DatePicker
         key={name}
-        label={label}
-        value={value}
-        onChange={(date: Date | null) => onChange(date)}
-        renderInput={(params: any) => (
-          <TextValidator
-            {...params}
-            fullWidth
-            variant="outlined"
-            margin="normal"
-            name={name}
-            validators={validators}
-            errorMessages={errorMessages}
-            autoComplete="off"
-          />
-        )}
+        selected={value}
+        dateFormat="dd/MM/yyyy"
+        onChange={(date: Date) => onChange(date)}
       />
     );
 
