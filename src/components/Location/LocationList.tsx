@@ -78,7 +78,11 @@ const LocationList: React.FC = () => {
       setSelectedLocation(location);
 
       // Use Firebase Storage SDK to get blob
-      const storageRef = ref(storage, `location-photos/${location.id}`);
+      const storageRef = ref(
+        storage,
+        location.photoURL
+      );
+
       const blob = await getBlob(storageRef);
 
       // Set locationPhoto with Blob details

@@ -53,7 +53,7 @@ const NewLocation: React.FC = () => {
 
             const storageRef = ref(
               storage,
-              `location-photos/${locationData.id}`
+              locationData.photoURL
             );
 
             const blob = await getBlob(storageRef);

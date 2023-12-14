@@ -48,9 +48,7 @@ import { LocationServiceInterface } from "../interfaces/Location/LocationService
               country: {
                 id: childSnapshot.val().country.id as string,
                 name: childSnapshot.val().country.name as string,
-              },
-              // Add other properties based on your data structure
-              // otherProperty: childSnapshot.val().otherProperty as string,
+              }
             };
             locations.push(location);
           });

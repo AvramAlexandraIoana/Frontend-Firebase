@@ -13,6 +13,8 @@ import CountryList from "./components/Country/CountryList";
 import NewCountry from "./components/Country/NewCountry";
 import LocationList from "./components/Location/LocationList";
 import NewLocation from "./components/Location/NewLocation";
+import AgencyList from "./components/Agency/AgencyList";
+import NewAgency from "./components/Agency/NewAgency";
 
 function App() {
   return (
@@ -34,6 +36,9 @@ function App() {
 
           <Route path="/location-list" element={<LocationList />} />
           <Route path="/location/:id" element={<NewLocation />} />
+
+          <Route path="/agency-list" element={<AgencyList />} />
+          <Route path="/agency/:id" element={<NewAgency />} />
         </Routes>
       </>
     </Provider>
