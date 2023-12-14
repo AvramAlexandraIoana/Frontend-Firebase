@@ -17,6 +17,7 @@ import AgencyList from "./components/Agency/AgencyList";
 import NewAgency from "./components/Agency/NewAgency";
 import TripList from "./components/Trip/TripList";
 import NewTrip from "./components/Trip/NewTrip";
+import PurchaseList from "./components/Trip/PurchaseList";
 
 function App() {
   return (
@@ -44,6 +45,8 @@ function App() {
 
           <Route path="/trip-list" element={<TripList />} />
           <Route path="/trip/:id" element={<NewTrip />} />
+
+          <Route path="/purchase-list" element={<PurchaseList />} />
         </Routes>
       </>
     </Provider>

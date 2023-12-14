@@ -93,9 +93,10 @@ const TripList: React.FC = () => {
       }
 
       const purchase: Purchase = {
+        id: generateRandomId(),
         user,
         trip,
-        purchaseDate: new Date(),
+        purchaseDate: new Date(), // This line sets the purchaseDate to the current date and time
       };
 
       await tripService.purchaseTrip(purchase);
@@ -104,6 +105,20 @@ const TripList: React.FC = () => {
     } catch (error) {
       console.error("Error purchasing trip:", error);
     }
+  };
+
+  const generateRandomId = (): string => {
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const length = 20;
+    let randomId = "";
+
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      randomId += characters.charAt(randomIndex);
+    }
+
+    return randomId;
   };
 
   return (

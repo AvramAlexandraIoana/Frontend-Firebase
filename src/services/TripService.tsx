@@ -10,11 +10,13 @@ import {
   push,
   query,
   orderByChild,
+  equalTo,
 } from "firebase/database";
 import { firebase } from "../configuration/firebase";
 import { Country } from "../interfaces/Country/Country";
 import { Purchase } from "../interfaces/Trip/Purchase";
 import { TripServiceInterface } from "../interfaces/Trip/TripServiceInterface";
+import { User } from "../interfaces/Auth/User";
 
 const database = getDatabase(firebase);
 
@@ -155,13 +157,41 @@ export class TripService implements TripServiceInterface {
       const purchasesRef = ref(database, "purchases");
       const newPurchaseRef = push(purchasesRef);
 
-      await set(newPurchaseRef, {
-        user: purchase.user,
-        trip: purchase.trip,
-        purchaseDate: new Date(),
-      });
+      await set(newPurchaseRef, purchase);
     } catch (error) {
       console.error("Error purchasing trip:", error);
+      throw error;
+    }
+  }
+
+  async getAllPurchasesForUser(userId: string): Promise<Purchase[]> {
+    try {
+      const purchasesRef = ref(database, "purchases");
+      const userPurchasesQuery = query(
+        purchasesRef,
+        orderByChild("user/id"),
+        equalTo(userId)
+      );
+
+      const snapshot = await get(userPurchasesQuery);
+
+      const purchases: Purchase[] = [];
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          const purchase: Purchase = {
+            id: childSnapshot.key as string,
+            user: childSnapshot.val().user as User, // Adjust this based on your structure
+            trip: childSnapshot.val().trip as Trip, // Adjust this based on your structure
+            purchaseDate: childSnapshot.val().purchaseDate as Date,
+          };
+          purchases.push(purchase);
+        });
+      }
+
+      console.log("purchases for user", purchases);
+      return purchases;
+    } catch (error) {
+      console.error("Error fetching user purchases:", error);
       throw error;
     }
   }
