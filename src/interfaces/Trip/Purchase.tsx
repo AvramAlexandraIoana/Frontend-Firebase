@@ -3,8 +3,7 @@ import { Trip } from "./Trip";
 
 export interface Purchase {
   id: string;
-  test: string;
-  date: Date;
+  purchaseDate: Date;
   user: User;
   trip: Trip;
 }

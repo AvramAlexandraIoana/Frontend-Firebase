@@ -92,13 +92,12 @@ const TripList: React.FC = () => {
         return;
       }
 
-      const purchase: Purchase = {
+      const purchase = {
         id: generateRandomId(),
-        test: "test",
-        date: new Date(), // This line sets the purchaseDate to the current date and time
+        purchaseDate: new Date().toISOString(), // This line sets the purchaseDate to the current date and time
         user,
         trip,
-      };
+      } as unknown as Purchase;
 
       await tripService.purchaseTrip(purchase);
       // Optionally, you can fetch and update the trips after a purchase

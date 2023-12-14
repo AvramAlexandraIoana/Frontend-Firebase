@@ -98,8 +98,8 @@ const PurchaseList: React.FC = () => {
             <TableHead>
               <TableRow>
                 {[
+                  "Purchase ID",
                   "Purchase Date",
-                  "User ID",
                   "Trip ID",
                   "Trip Name",
                   "Start Date",
@@ -129,8 +129,10 @@ const PurchaseList: React.FC = () => {
               ) : (
                 purchases.map((purchase) => (
                   <TableRow key={purchase.id}>
-                    <TableCell>{formatDate(new Date(purchase.date))}</TableCell>
-                    <TableCell>{purchase.user.localId}</TableCell>
+                    <TableCell>{purchase.id}</TableCell>
+                    <TableCell>
+                      {formatDate(new Date(purchase.purchaseDate))}
+                    </TableCell>
                     <TableCell>{purchase.trip.id}</TableCell>
                     <TableCell>{purchase.trip.name}</TableCell>
                     <TableCell>
@@ -174,7 +176,7 @@ const PurchaseList: React.FC = () => {
               <>
                 <p>
                   <strong>Purchase Date:</strong>{" "}
-                  {formatDate(new Date(selectedPurchase.date))}
+                  {formatDate(new Date(selectedPurchase.purchaseDate))}
                 </p>
                 <p>
                   <strong>User ID:</strong> {selectedPurchase.user.localId}
